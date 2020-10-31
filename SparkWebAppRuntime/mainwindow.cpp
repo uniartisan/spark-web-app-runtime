@@ -65,6 +65,7 @@ MainWindow::MainWindow(QString szTitle,
 
 MainWindow::~MainWindow()
 {
+    emit sigQuit();
     if (m_widget)
     {
         delete m_widget;

@@ -1,4 +1,4 @@
-QT += core widgets gui webengine webenginewidgets svg
+QT += core widgets gui webengine webenginewidgets svg concurrent
 
 greaterThan(QT_MAJOR_VERSION, 5): QT += widgets
 
@@ -10,12 +10,15 @@ CONFIG += c++11 link_pkgconfig
 PKGCONFIG += dtkwidget
 
 SOURCES += main.cpp\
+        httpd.cpp \
         mainwindow.cpp \
         webenginepage.cpp \
         widget.cpp
 
 HEADERS  += mainwindow.h \
          globaldefine.h \
+         httpd.h \
+         httplib.h \
          webenginepage.h \
          widget.h
 

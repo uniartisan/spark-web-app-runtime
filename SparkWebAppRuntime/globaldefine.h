@@ -13,4 +13,7 @@
 #define DEFAULT_ICON    QString()
 #define DEFAULT_CFG     QString()
 
+#define DEFAULT_ROOT    QString()
+#define DEFAULT_PORT    0
+
 #endif // GLOBALDEFINE_H

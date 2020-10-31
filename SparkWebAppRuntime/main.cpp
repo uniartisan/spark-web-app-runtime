@@ -14,11 +14,13 @@
 #include <QCommandLineParser>
 #include <QCommandLineOption>
 
-#include "globaldefine.h"
 #include <QTranslator>
 
 #include <QFileInfo>
 #include <QSettings>
+
+#include "globaldefine.h"
+#include "httpd.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -109,6 +111,27 @@ int main(int argc, char *argv[])
                                   DEFAULT_CFG);
     parser.addOption(optCfgFile);
 
+    QCommandLineOption optRootPath(QStringList() << "r" << "root",
+                                   QObject::tr("The root path of the program web service."),
+                                   "root",
+                                   DEFAULT_ROOT);
+    parser.addOption(optRootPath);
+
+
+    QCommandLineOption optPort(QStringList() << "P" << "port",
+                               QObject::tr("The port number of the program web service."),
+                               "port",
+                               DEFAULT_PORT);
+    parser.addOption(optPort);
+
+#if SSL_SERVER
+    QCommandLineOption optSSLPort(QStringList() << "s" << "sslport",
+                                  QObject::tr("The ssl port number of the program web service."),
+                                  "sslport",
+                                  DEFAULT_PORT);
+    parser.addOption(optSSLPort);
+#endif
+
     parser.process(a);
 
     QString szTitle = DEFAULT_TITLE;
@@ -117,6 +140,11 @@ int main(int argc, char *argv[])
     int height = DEFAULT_HEIGHT;
     QString szIcon = DEFAULT_ICON;
     QString szDesc = DEFAULT_DESC;
+    QString szRootPath = DEFAULT_ROOT;
+    quint16 u16Port = DEFAULT_PORT;
+#if SSL_SERVER
+    quint16 u16sslPort = 0;
+#endif
 
     QString szCfgFile = DEFAULT_CFG;
     if (parser.isSet(optCfgFile))
@@ -136,6 +164,11 @@ int main(int argc, char *argv[])
                 szDesc = QString("%1<br/><br/>%2")
                          .arg(settings.value("SpartWebAppRuntime/Desc", QString()).toString())
                          .arg(szDefaultDesc);
+                szRootPath = settings.value("SpartWebAppRuntime/RootPath", QString()).toString();
+                u16Port = settings.value("SpartWebAppRuntime/Port", 0).toUInt();
+#if SSL_SERVER
+                u16sslPort = settings.value("SpartWebAppRuntime/SSLPort", 0).toUInt();
+#endif
             }
         }
     }
@@ -164,24 +197,33 @@ int main(int argc, char *argv[])
                  .arg(szDefaultDesc);
     }
 
+    if (parser.isSet(optRootPath))
+    {
+        szRootPath = parser.value(optRootPath);
+    }
+
+    if (parser.isSet(optPort))
+    {
+        u16Port = parser.value(optPort).toUInt();
+    }
+
+#if SSL_SERVER
+    if (parser.isSet(optSSLPort))
+    {
+        u16sslPort = parser.value(optSSLPort).toUInt();
+    }
+#endif
     if (!parser.isSet(optParser))
     {
         do
         {
             // 按照固定顺序级别最优先
-            if (argc != 7)
-            {
-#if 0
-                QMessageBox::information(nullptr, QObject::tr("Usage:"),
-                                         QObject::tr("The first usage: \n"
-                                                     "%1 %2\n"
-                                                     "The second usage:\n"
-                                                     "%1 %3")
-                                         .arg(argv[0])
-                                         .arg(QObject::tr("Title URL Width Height"))
-                                         .arg(QObject::tr("-h to view parameter list.")));
-                return 0;
+#if SSL_SERVER
+            if (argc != 10)
+#else
+            if (argc != 9)
 #endif
+            {
                 break;
             }
 
@@ -192,11 +234,31 @@ int main(int argc, char *argv[])
             szIcon = QString(argv[5]);
             szDesc = QString("%1<br/><br/>%2").arg(QString(argv[6]))
                      .arg(szDefaultDesc);;
+            szRootPath = QString(argv[7]);
+            u16Port = QString(argv[8]).toUInt();
+#if SSL_SERVER
+            u16sslPort = QString(argv[9]).toUInt();
+#endif
         }
         while (false);
     }
 
     MainWindow w(szTitle, szUrl, width, height);
+
+#if SSL_SERVER
+    if (!szRootPath.isEmpty() && u16Port > 0 && u16sslPort > 0)
+    {
+        HttpD httpd(szRootPath, u16Port, u16sslPort);
+        httpd.start();
+    }
+#else
+    if (!szRootPath.isEmpty() && u16Port > 0)
+    {
+        static HttpD httpd(szRootPath, u16Port);
+        QObject::connect(&w, &MainWindow::sigQuit, &httpd, &HttpD::stop);
+        httpd.start();
+    }
+#endif
 
     if (parser.isSet(optIcon))
     {

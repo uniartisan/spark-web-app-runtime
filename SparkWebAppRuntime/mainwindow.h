@@ -22,6 +22,9 @@ public:
 
     void setIcon(QString);
 
+signals:
+    void sigQuit();
+
 private:
     Widget *m_widget;
 };
