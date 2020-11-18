@@ -15,7 +15,7 @@ class Widget : public QWidget
     Q_OBJECT
 
 public:
-    explicit Widget(QString szUrl = QString(), QWidget *parent = 0);
+    explicit Widget(QString szUrl = QString(), QWidget *parent = nullptr);
     ~Widget();
 
     void goBack();

@@ -27,6 +27,6 @@ FORMS += widget.ui
 RESOURCES += imgs.qrc
 
 TRANSLATIONS += \
-    translations/SparkWebAppRuntime_zh_CN.ts
+    translations/spark-webapp-runtime_zh_CN.ts
 
 

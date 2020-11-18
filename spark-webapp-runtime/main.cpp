@@ -13,9 +13,6 @@
 
 #include <QCommandLineParser>
 #include <QCommandLineOption>
-
-#include <QTranslator>
-
 #include <QFileInfo>
 #include <QSettings>
 
@@ -42,7 +39,7 @@ int main(int argc, char *argv[])
     //descrition
     dialog.setProductName(QString("<span>%1</span>").arg(DEFAULT_TITLE));
     //Icons
-    dialog.setProductIcon(QIcon(":/images/deepin-launcher.svg"));
+    dialog.setProductIcon(QIcon(":/images/spark-webapp-runtime.svg"));
     //Organization logo
     dialog.setCompanyLogo(QPixmap(":/images/Logo-Spark.png"));
     //about

@@ -2,7 +2,6 @@
 #include "httplib.h"
 
 #include <QtConcurrent>
-
 #include <QDebug>
 
 using namespace httplib;

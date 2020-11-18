@@ -1,7 +1,7 @@
 # SparkWebAppRuntime
 
 #### Description
-星火商店WEBAPP运行时. 旨在简单快捷的将WEB封装为应用模式.
+Spark-Store WebApp Runtime, intended to package webpages into apps easily.
 
 #### Software Architecture
 Software architecture description

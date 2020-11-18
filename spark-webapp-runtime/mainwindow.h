@@ -2,8 +2,8 @@
 #define MAINWINDOW_H
 
 #include <DMainWindow>
-#include "widget.h"
 
+#include "widget.h"
 #include "globaldefine.h"
 
 DWIDGET_USE_NAMESPACE
@@ -17,7 +17,7 @@ public:
                QString szUrl = DEFAULT_URL,
                int nWidth = DEFAULT_WIDTH,
                int nHeight = DEFAULT_HEIGHT,
-               QWidget *parent = 0);
+               QWidget *parent = nullptr);
     ~MainWindow();
 
     void setIcon(QString);

@@ -7,7 +7,7 @@
 class WebEnginePage : public QWebEnginePage
 {
 public:
-    WebEnginePage(QObject *parent = Q_NULLPTR);
+    WebEnginePage(QObject *parent = nullptr);
 
 protected:
     QWebEnginePage *createWindow(WebWindowType type) override;

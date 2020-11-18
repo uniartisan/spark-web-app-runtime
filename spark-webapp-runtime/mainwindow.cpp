@@ -1,9 +1,9 @@
 #include "mainwindow.h"
 #include <DMainWindow>
 #include <DTitlebar>
-#include <QtWidgets/QVBoxLayout>
 #include <DToolButton>
 
+#include <QLayout>
 #include <QFileInfo>
 
 DWIDGET_USE_NAMESPACE
@@ -18,13 +18,16 @@ MainWindow::MainWindow(QString szTitle,
 {
     m_widget = new Widget(szUrl);
 
-    setFixedSize(nWidth, nHeight);
+    //  setFixedSize(nWidth, nHeight);
+    //  应 shenmo 要求改成设置最小尺寸试试效果
+    setMinimumSize(nWidth, nHeight);
+
     titlebar()->setTitle(szTitle);
 
     setCentralWidget(m_widget);
     centralWidget()->layout()->setContentsMargins(0, 0, 0, 0);
 
-    titlebar()->setIcon(QIcon(":/images/deepin-launcher.svg"));
+    titlebar()->setIcon(QIcon(":/images/spark-webapp-runtime.svg"));
 
     DToolButton *btnBack = new DToolButton(titlebar());
     btnBack->setIcon(QIcon(":/images/go-previous-24.svg"));
