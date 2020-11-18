@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
                             .arg(QObject::tr("Presented By Spark developers # HadesStudio"));
     dialog.setDescription(szDefaultDesc);
     //Version
-    dialog.setVersion(DApplication::buildVersion(QString("%1 %2").arg(QObject::tr("Version")).arg("1.0")));
+    dialog.setVersion(DApplication::buildVersion(QString("%1 %2").arg(QObject::tr("Version")).arg("1.4")));
     //Website name
     dialog.setWebsiteName("spark-app.store");
     //Website link
