@@ -27,6 +27,7 @@ int main(int argc, char *argv[])
     DAboutDialog dialog;
     a.loadTranslator();
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
+    a.setOrganizationName("spark-union");       // 添加组织名称，和商店主体的文件夹同在 ~/.local/share/spark-union 文件夹下
     a.setApplicationName("SparkWebAppRuntime"); // 这里不要翻译，否则 ~/.local/share 中文件夹名也会被翻译
     a.setProductName(DEFAULT_TITLE);
     a.setAboutDialog(&dialog);
