@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
     DAboutDialog dialog;
     a.loadTranslator();
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
-    a.setApplicationName(DEFAULT_TITLE);
+    a.setApplicationName("SparkWebAppRuntime"); // 这里不要翻译，否则 ~/.local/share 中文件夹名也会被翻译
     a.setProductName(DEFAULT_TITLE);
     a.setAboutDialog(&dialog);
 
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
     parser.addOption(optWidth);
 
     QCommandLineOption optHeight(QStringList() << "H" << "height",
-                                 QObject::tr("The Height of Application. Default is %1").arg(DEFAULT_HEIGHT),
+                                 QObject::tr("The Height of Application. Default is %1.").arg(DEFAULT_HEIGHT),
                                  "height",
                                  QString::number(DEFAULT_HEIGHT));
     parser.addOption(optHeight);
