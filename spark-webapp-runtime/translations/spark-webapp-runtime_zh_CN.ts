@@ -2,6 +2,19 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_CN">
 <context>
+    <name>MainWindow</name>
+    <message>
+        <location filename="../mainwindow.cpp" line="23"/>
+        <source>Fix Size</source>
+        <translation>固定大小</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="24"/>
+        <source>Hide Buttons</source>
+        <translation>隐藏按钮</translation>
+    </message>
+</context>
+<context>
     <name>QObject</name>
     <message>
         <location filename="../main.cpp" line="49"/>

@@ -3,6 +3,7 @@
 
 #include <DMainWindow>
 #include <DAboutDialog>
+#include <DToolButton>
 
 #include "widget.h"
 #include "globaldefine.h"
@@ -23,6 +24,8 @@ public:
     ~MainWindow();
 
     void setIcon(QString);
+    void fixSize();
+    void hideButtons();
 
 signals:
     void sigQuit();
@@ -30,6 +33,16 @@ signals:
 private:
     Widget *m_widget;
     DAboutDialog *m_dialog;
+
+    DToolButton *btnBackward;
+    DToolButton *btnForward;
+    DToolButton *btnRefresh;
+
+    QMenu *m_menu;
+    QAction *m_fixSize;
+    QAction *m_hideButtons;
+
+    int m_width, m_height;
 
     void closeEvent(QCloseEvent *event);
 
