@@ -8,7 +8,6 @@
 #include "mainwindow.h"
 
 #include <DApplication>
-#include <DWidgetUtil>
 #include <DMainWindow>
 
 #include <QCommandLineParser>
@@ -89,6 +88,14 @@ int main(int argc, char *argv[])
                                  QString::number(DEFAULT_HEIGHT));
     parser.addOption(optHeight);
 
+    QCommandLineOption optFixSize("fix-size",
+                                  QObject::tr("Fix Window Size. Default is false."));
+    parser.addOption(optFixSize);
+
+    QCommandLineOption optHideButtons("hide-buttons",
+                               QObject::tr("Hide Control Buttons. Default is false."));
+    parser.addOption(optHideButtons);
+
     QCommandLineOption optIcon(QStringList() << "i" << "ico",
                                QObject::tr("The ICON of Application."),
                                "ico",
@@ -134,6 +141,8 @@ int main(int argc, char *argv[])
     QString szUrl = DEFAULT_URL;
     int width = DEFAULT_WIDTH;
     int height = DEFAULT_HEIGHT;
+    bool fixSize = false;
+    bool hideButtons = false;
     QString szIcon = DEFAULT_ICON;
     QString szDesc = DEFAULT_DESC;
     QString szRootPath = DEFAULT_ROOT;
@@ -152,18 +161,20 @@ int main(int argc, char *argv[])
             if (fi.exists())
             {
                 QSettings settings(szCfgFile, QSettings::IniFormat);
-                szTitle = settings.value("SpartWebAppRuntime/Title", DEFAULT_TITLE).toString();
-                szUrl = settings.value("SpartWebAppRuntime/URL", DEFAULT_TITLE).toString();
-                width = settings.value("SpartWebAppRuntime/Width", DEFAULT_WIDTH).toUInt();
-                height = settings.value("SpartWebAppRuntime/Height", DEFAULT_HEIGHT).toUInt();
-                szIcon = settings.value("SpartWebAppRuntime/Ico", DEFAULT_ICON).toString();
+                szTitle = settings.value("SparkWebAppRuntime/Title", DEFAULT_TITLE).toString();
+                szUrl = settings.value("SparkWebAppRuntime/URL", DEFAULT_TITLE).toString();
+                width = settings.value("SparkWebAppRuntime/Width", DEFAULT_WIDTH).toUInt();
+                height = settings.value("SparkWebAppRuntime/Height", DEFAULT_HEIGHT).toUInt();
+                fixSize = settings.value("SparkWebAppRunTime/FixSize", false).toBool();
+                hideButtons = settings.value("SparkWebAppRunTime/HideButtons", false).toBool();
+                szIcon = settings.value("SparkWebAppRuntime/Ico", DEFAULT_ICON).toString();
                 szDesc = QString("%1<br/><br/>%2")
-                         .arg(settings.value("SpartWebAppRuntime/Desc", QString()).toString())
+                         .arg(settings.value("SparkWebAppRuntime/Desc", QString()).toString())
                          .arg(szDefaultDesc);
-                szRootPath = settings.value("SpartWebAppRuntime/RootPath", QString()).toString();
-                u16Port = settings.value("SpartWebAppRuntime/Port", 0).toUInt();
+                szRootPath = settings.value("SparkWebAppRuntime/RootPath", QString()).toString();
+                u16Port = settings.value("SparkWebAppRuntime/Port", 0).toUInt();
 #if SSL_SERVER
-                u16sslPort = settings.value("SpartWebAppRuntime/SSLPort", 0).toUInt();
+                u16sslPort = settings.value("SparkWebAppRuntime/SSLPort", 0).toUInt();
 #endif
             }
         }
@@ -185,6 +196,15 @@ int main(int argc, char *argv[])
     if (parser.isSet(optHeight))
     {
         height = parser.value(optHeight).toInt();
+    }
+
+    if (parser.isSet(optFixSize))
+    {
+        fixSize = true;
+    }
+    if (parser.isSet(optHideButtons))
+    {
+        hideButtons = true;
     }
 
     if (parser.isSet(optDesc))
@@ -230,30 +250,41 @@ int main(int argc, char *argv[])
         {
             height = QString(argv[4]).toInt();
         }
+
         if (argc > 5)
         {
-            szIcon = QString(argv[5]);
+            fixSize = true;
         }
         if (argc > 6)
-            szDesc = QString("%1<br/><br/>%2").arg(QString(argv[6]))
-                     .arg(szDefaultDesc);;
+        {
+            hideButtons = true;
+        }
+
         if (argc > 7)
         {
-            szRootPath = QString(argv[7]);
+            szIcon = QString(argv[7]);
         }
         if (argc > 8)
         {
-            u16Port = QString(argv[8]).toUInt();
+            szDesc = QString("%1<br/><br/>%2").arg(QString(argv[8])).arg(szDefaultDesc);
         }
-#if SSL_SERVER
         if (argc > 9)
         {
-            u16sslPort = QString(argv[9]).toUInt();
+            szRootPath = QString(argv[9]);
+        }
+        if (argc > 10)
+        {
+            u16Port = QString(argv[10]).toUInt();
+        }
+#if SSL_SERVER
+        if (argc > 11)
+        {
+            u16sslPort = QString(argv[11]).toUInt();
         }
 #endif
     }
 
-    MainWindow w(szTitle, szUrl, width, height, dialog);
+    MainWindow w(szTitle, szUrl, width, height, fixSize, hideButtons, dialog);
 
 #if SSL_SERVER
     if (!szRootPath.isEmpty() && u16Port > 0 && u16sslPort > 0)
@@ -287,7 +318,5 @@ int main(int argc, char *argv[])
     }
 
     w.show();
-
-    Dtk::Widget::moveToCenter(&w);
     return a.exec();
 }

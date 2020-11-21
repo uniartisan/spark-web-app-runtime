@@ -4,22 +4,24 @@
 
 
 ```shell
-用法：./SparkWebAppRuntime [选项]
+用法：./spark-webapp-runtime [选项]
 描述: 星火网页应用运行时
 
 选项：
  -h, --help 显示这个此帮助。
  -v, --version 显示版本信息。
- -p, --parser 启用参数解析方式. 默认顺序解析方式.
- -t, --title \&lt;title\&gt; 设置程序的运行标题. 默认是 星火网页应用运行时.
- -u, --url \&lt;url\&gt; 设置要打开的目标URL. 默认是空.
- -w, --width \&lt;width\&gt; 设置程序运行的宽度. 默认是 1024.
- -H, --height \&lt;height\&gt; 设置程序运行的高度. 默认是 768
- -i, --ico \&lt;ico\&gt; 设置程序运行的图标.
- -d, --desc \&lt;desc\&gt; 设置程序的描述信息.
- -c, --cfg \&lt;cfg\&gt; 设置程序运行的配置文件.
- -r, --root \&lt;root\&gt; 设置内置WebServer的根路径.
- -P, --port \&lt;port\&gt; 设置内置WebServer的监听端口号.
+ -p, --parser 启用参数解析方式。默认顺序解析方式。
+ -t, --title \&lt;title\&gt; 设置程序的运行标题。默认是 星火网页应用运行环境。
+ -u, --url \&lt;url\&gt; 设置要打开的目标 URL。默认为空。
+ -w, --width \&lt;width\&gt; 设置程序运行的宽度。默认为 1024。
+ -H, --height \&lt;height\&gt; 设置程序运行的高度。默认为 768。
+ --fix-size 固定窗口大小。默认关闭该功能。
+ --hide-buttons 隐藏控制按钮。默认关闭该功能。
+ -i, --ico \&lt;ico\&gt; 设置程序运行的图标。
+ -d, --desc \&lt;desc\&gt; 设置程序的描述信息。
+ -c, --cfg \&lt;cfg\&gt; 设置程序运行的配置文件。
+ -r, --root \&lt;root\&gt; 设置内置 WebServer 的根路径。
+ -P, --port \&lt;port\&gt; 设置内置 WebServer 的监听端口号。
 ```
 
 这里给大家附送两个例子，帮助大家理解使用
@@ -56,7 +58,7 @@
 
 作为星火系列应用，我们的设计哲学是M.I.S.(Make it Simple)没错我就是从KISS抄的
 
-配置spark-webapp-runtime环境是非常简单的
+配置 spark-webapp-runtime 环境是非常简单的
 
 只需要
 

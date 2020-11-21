@@ -19,6 +19,8 @@ public:
                QString szUrl = DEFAULT_URL,
                int nWidth = DEFAULT_WIDTH,
                int nHeight = DEFAULT_HEIGHT,
+               bool nFixSize = false,
+               bool nHideButtons = false,
                DAboutDialog *dialog = nullptr,
                QWidget *parent = nullptr);
     ~MainWindow();

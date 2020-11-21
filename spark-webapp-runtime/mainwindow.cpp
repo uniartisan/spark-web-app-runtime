@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 
 #include <DMainWindow>
+#include <DWidgetUtil>
 #include <DTitlebar>
 
 #include <QLayout>
@@ -11,6 +12,8 @@ MainWindow::MainWindow(QString szTitle,
                        QString szUrl,
                        int nWidth,
                        int nHeight,
+                       bool nFixSize,
+                       bool nHideButtons,
                        DAboutDialog *dialog,
                        QWidget *parent)
     : DMainWindow(parent)
@@ -25,12 +28,12 @@ MainWindow::MainWindow(QString szTitle,
     , m_width(nWidth)
     , m_height(nHeight)
 {
-    //  setFixedSize(nWidth, nHeight);
-    //  应 shenmo 要求改成设置最小尺寸试试效果
-    setMinimumSize(m_width, m_height);
-
     setCentralWidget(m_widget);
     centralWidget()->layout()->setContentsMargins(0, 0, 0, 0);
+
+    resize(m_width, m_height);
+
+    moveToCenter(this);
 
     setWindowIcon(QIcon(":/images/spark-webapp-runtime.svg"));
 
@@ -49,12 +52,17 @@ MainWindow::MainWindow(QString szTitle,
     titlebar()->addWidget(btnRefresh, Qt::AlignLeft);
 
     m_fixSize->setCheckable(true);
-    m_fixSize->setChecked(false);
+    m_fixSize->setChecked(nFixSize);
+    m_fixSize->setDisabled(nFixSize);   // 建议使用命令行参数 --fix-size 或者 --hide-buttons 时直接禁止在 GUI 修改选项，主要因为最大化按钮无法刷新存在状态，干脆都禁用了......
     m_hideButtons->setCheckable(true);
-    m_hideButtons->setChecked(false);
+    m_hideButtons->setChecked(nHideButtons);
+    m_hideButtons->setDisabled(nHideButtons);
     m_menu->addAction(m_fixSize);
     m_menu->addAction(m_hideButtons);
     titlebar()->setMenu(m_menu);
+
+    fixSize();
+    hideButtons();
 
     connect(btnBackward, &DToolButton::clicked, this, [&]()
     {
@@ -122,19 +130,12 @@ void MainWindow::fixSize()
 {
     if(m_fixSize->isChecked())
     {
-        setFixedSize(this->width(), this->height());    // setFixedSize() 等同于同时设置 MaximumSize 和 MinimumSize
-        resize(this->width(), this->height());
-
-        /*
-         * 尝试固定窗口大小后禁用最大化按钮，但是取消勾选后无法恢复
-         * titlebar()->setDisableFlags(Qt::WindowMaximizeButtonHint);
-         */
+        setFixedSize(this->width(), this->height());
     }
     else
     {
         setMinimumSize(m_width, m_height);
         setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
-        resize(this->width(), this->height());
     }
 }
 
@@ -142,15 +143,15 @@ void MainWindow::hideButtons()
 {
     if(m_hideButtons->isChecked())
     {
-        titlebar()->removeWidget(btnBackward);
-        titlebar()->removeWidget(btnForward);
-        titlebar()->removeWidget(btnRefresh);
+        btnBackward->hide();
+        btnForward->hide();
+        btnRefresh->hide();
     }
     else
     {
-        titlebar()->addWidget(btnBackward, Qt::AlignLeft);
-        titlebar()->addWidget(btnForward, Qt::AlignLeft);
-        titlebar()->addWidget(btnRefresh, Qt::AlignLeft);
+        btnBackward->show();
+        btnForward->show();
+        btnRefresh->show();
     }
 }
 
