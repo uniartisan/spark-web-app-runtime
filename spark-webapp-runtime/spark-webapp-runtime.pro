@@ -1,4 +1,4 @@
-QT += core widgets gui webengine webenginewidgets svg concurrent
+QT += core gui webengine webenginewidgets svg concurrent
 
 greaterThan(QT_MAJOR_VERSION, 5): QT += widgets
 

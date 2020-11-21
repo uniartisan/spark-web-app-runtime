@@ -6,9 +6,9 @@
  * 社区项目投递地址：https://gitee.com/deepin-opensource
 */
 #include "mainwindow.h"
+
 #include <DApplication>
 #include <DWidgetUtil>
-#include <DAboutDialog>
 #include <DMainWindow>
 
 #include <QCommandLineParser>
@@ -19,43 +19,41 @@
 #include "globaldefine.h"
 #include "httpd.h"
 
-DWIDGET_USE_NAMESPACE
-
 int main(int argc, char *argv[])
 {
     DApplication a(argc, argv);
-    DAboutDialog dialog;
+
     a.loadTranslator();
+
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
     a.setOrganizationName("spark-union");       // 添加组织名称，和商店主体的文件夹同在 ~/.local/share/spark-union 文件夹下
     a.setApplicationName("SparkWebAppRuntime"); // 这里不要翻译，否则 ~/.local/share 中文件夹名也会被翻译
-    a.setProductName(DEFAULT_TITLE);
-    a.setAboutDialog(&dialog);
 
-    //License
-    dialog.setLicense(QObject::tr("This program is open source under GPLv3"));    // 本程序按GPL第三版开源
+    DAboutDialog *dialog = new DAboutDialog;
+    a.setAboutDialog(dialog);
 
-    //Title
-    dialog.setWindowTitle(DEFAULT_TITLE);
-    //descrition
-    dialog.setProductName(QString("<span>%1</span>").arg(DEFAULT_TITLE));
-    //Icons
-    dialog.setProductIcon(QIcon(":/images/spark-webapp-runtime.svg"));
-    //Organization logo
-    dialog.setCompanyLogo(QPixmap(":/images/Logo-Spark.png"));
-    //about
-    QString szDefaultDesc = QString("<span style=' font-size:12pt;font-weight:500;'>%1</span><br/>"
-                                    "<a href='https://gitee.com/deepin-community-store'>https://gitee.com/deepin-community-store</a><br/>"
-                                    "<span style=' font-size:12pt;'>%2</span>")
+    // WindowIcon
+    dialog->setWindowIcon(QIcon(":/images/spark-webapp-runtime.svg"));
+    // ProductIcon
+    dialog->setProductIcon(QIcon(":/images/spark-webapp-runtime.svg"));
+    // ProductName
+    dialog->setProductName(QString("<span>%1</span>").arg(DEFAULT_TITLE));
+    // Version
+    dialog->setVersion(DApplication::buildVersion(QString("%1 %2").arg(QObject::tr("Version")).arg("1.5")));
+    // CompanyLogo
+    dialog->setCompanyLogo(QPixmap(":/images/Logo-Spark.png"));
+    // Description
+    QString szDefaultDesc = QString("<a href='https://gitee.com/deepin-community-store/spark-web-app-runtime'><span style='font-size:12pt;font-weight:500;'>%1</span></a><br/>"
+                                    "<span style='font-size:12pt;'>%2</span>")
                             .arg(DEFAULT_TITLE)
                             .arg(QObject::tr("Presented By Spark developers # HadesStudio"));
-    dialog.setDescription(szDefaultDesc);
-    //Version
-    dialog.setVersion(DApplication::buildVersion(QString("%1 %2").arg(QObject::tr("Version")).arg("1.4")));
-    //Website name
-    dialog.setWebsiteName("spark-app.store");
-    //Website link
-    dialog.setWebsiteLink("https://www.spark-app.store/");
+    dialog->setDescription(szDefaultDesc);
+    // WebsiteName
+    dialog->setWebsiteName("spark-app.store");
+    // WebsiteLink
+    dialog->setWebsiteLink("https://www.spark-app.store/");
+    // License
+    dialog->setLicense(QObject::tr("This program is open source under GPLv3"));    // 本程序按GPL第三版开源
 
     QCommandLineParser parser;
 
@@ -255,7 +253,7 @@ int main(int argc, char *argv[])
 #endif
     }
 
-    MainWindow w(szTitle, szUrl, width, height);
+    MainWindow w(szTitle, szUrl, width, height, dialog);
 
 #if SSL_SERVER
     if (!szRootPath.isEmpty() && u16Port > 0 && u16sslPort > 0)
@@ -279,13 +277,13 @@ int main(int argc, char *argv[])
 
     if (!szIcon.isEmpty())
     {
-        dialog.setIcon(QIcon(szIcon));
-        dialog.setProductIcon(QIcon(szIcon));
+        dialog->setWindowIcon(QIcon(szIcon));
+        dialog->setProductIcon(QIcon(szIcon));
         w.setIcon(szIcon);
     }
     if (!szDesc.isEmpty())
     {
-        dialog.setDescription(szDesc);
+        dialog->setDescription(szDesc);
     }
 
     w.show();

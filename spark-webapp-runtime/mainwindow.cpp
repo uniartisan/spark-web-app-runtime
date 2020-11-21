@@ -1,37 +1,38 @@
 #include "mainwindow.h"
+
 #include <DMainWindow>
 #include <DTitlebar>
 #include <DToolButton>
 
 #include <QLayout>
 #include <QFileInfo>
-
-DWIDGET_USE_NAMESPACE
+#include <QCloseEvent>
 
 MainWindow::MainWindow(QString szTitle,
                        QString szUrl,
                        int nWidth,
                        int nHeight,
+                       DAboutDialog *dialog,
                        QWidget *parent)
     : DMainWindow(parent)
-    , m_widget(nullptr)
+    , m_widget(new Widget(szUrl))
+    , m_dialog(dialog)
 {
-    m_widget = new Widget(szUrl);
-
     //  setFixedSize(nWidth, nHeight);
     //  应 shenmo 要求改成设置最小尺寸试试效果
     setMinimumSize(nWidth, nHeight);
 
-    titlebar()->setTitle(szTitle);
-
     setCentralWidget(m_widget);
     centralWidget()->layout()->setContentsMargins(0, 0, 0, 0);
 
+    setWindowIcon(QIcon(":/images/spark-webapp-runtime.svg"));
+
+    titlebar()->setTitle(szTitle);
     titlebar()->setIcon(QIcon(":/images/spark-webapp-runtime.svg"));
 
-    DToolButton *btnBack = new DToolButton(titlebar());
-    btnBack->setIcon(QIcon(":/images/go-previous-24.svg"));
-    btnBack->setIconSize(QSize(36, 36));
+    DToolButton *btnBackward = new DToolButton(titlebar());
+    btnBackward->setIcon(QIcon(":/images/go-previous-24.svg"));
+    btnBackward->setIconSize(QSize(36, 36));
     DToolButton *btnForward = new DToolButton(titlebar());
     btnForward->setIcon(QIcon(":/images/go-next-24.svg"));
     btnForward->setIconSize(QSize(36, 36));
@@ -39,7 +40,11 @@ MainWindow::MainWindow(QString szTitle,
     btnRefresh->setIcon(QIcon(":/images/view-refresh.svg"));
     btnRefresh->setIconSize(QSize(36, 36));
 
-    connect(btnBack, &DToolButton::clicked, this, [&]()
+    titlebar()->addWidget(btnBackward, Qt::AlignLeft);
+    titlebar()->addWidget(btnForward, Qt::AlignLeft);
+    titlebar()->addWidget(btnRefresh, Qt::AlignLeft);
+
+    connect(btnBackward, &DToolButton::clicked, this, [&]()
     {
         if (m_widget)
         {
@@ -60,10 +65,6 @@ MainWindow::MainWindow(QString szTitle,
             m_widget->refresh();
         }
     });
-
-    titlebar()->addWidget(btnBack, Qt::AlignLeft);
-    titlebar()->addWidget(btnForward, Qt::AlignLeft);
-    titlebar()->addWidget(btnRefresh, Qt::AlignLeft);
 }
 
 MainWindow::~MainWindow()
@@ -74,6 +75,11 @@ MainWindow::~MainWindow()
         delete m_widget;
         m_widget = nullptr;
     }
+    if (m_dialog)
+    {
+        delete m_dialog;
+        m_dialog = nullptr;
+    }
 }
 
 void MainWindow::setIcon(QString szIconPath)
@@ -82,10 +88,17 @@ void MainWindow::setIcon(QString szIconPath)
     if (fi.exists())
     {
         titlebar()->setIcon(QIcon(szIconPath));
+        setWindowIcon(QIcon(szIconPath));
         qDebug() << szIconPath << "is Set!";
     }
     else
     {
         qDebug() << szIconPath << "is Not Exists!";
     }
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    m_dialog->close();
+    event->accept();
 }

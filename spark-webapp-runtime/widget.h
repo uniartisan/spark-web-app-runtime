@@ -23,9 +23,10 @@ public:
     void refresh();
 
 private:
-    Ui::Widget     *ui;
+    Ui::Widget *ui;
+
     QWebEngineView *m_webEngineView;
-    QString         m_szUrl;
+    QString m_szUrl;
 };
 
 #endif // WIDGET_H

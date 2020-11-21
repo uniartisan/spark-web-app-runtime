@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <DMainWindow>
+#include <DAboutDialog>
 
 #include "widget.h"
 #include "globaldefine.h"
@@ -17,6 +18,7 @@ public:
                QString szUrl = DEFAULT_URL,
                int nWidth = DEFAULT_WIDTH,
                int nHeight = DEFAULT_HEIGHT,
+               DAboutDialog *dialog = nullptr,
                QWidget *parent = nullptr);
     ~MainWindow();
 
@@ -27,6 +29,10 @@ signals:
 
 private:
     Widget *m_widget;
+    DAboutDialog *m_dialog;
+
+    void closeEvent(QCloseEvent *event);
+
 };
 
 #endif // MAINWINDOW_H
