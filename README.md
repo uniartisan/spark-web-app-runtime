@@ -1,10 +1,9 @@
-[                                                        ](spk://store/development/spark-webapp-runtime-waker) ![](RackMultipart20201120-4-ntgpe9_html_1acb66441c6937a3.gif)
-
-                                                   ![](RackMultipart20201120-4-ntgpe9_html_c5dd964be3f7b4b3.gif)
+![](https://examine-spark.oss-cn-shanghai.aliyuncs.com/icons/2020/11/14/38fe8d30-268e-11eb-881e-fff03f7ff5ca.png)
 
 运行 &quot;spark-webapp-runtime -h&quot; 查看命令行帮助信息
 
 
+```shell
 用法：./SparkWebAppRuntime [选项]
 描述: 星火网页应用运行时
 
@@ -21,24 +20,27 @@
  -c, --cfg \&lt;cfg\&gt; 设置程序运行的配置文件.
  -r, --root \&lt;root\&gt; 设置内置WebServer的根路径.
  -P, --port \&lt;port\&gt; 设置内置WebServer的监听端口号.
+```
 
 这里给大家附送两个例子，帮助大家理解使用
 
 这是一款使用了-r选项（自带webserver）的一款应用的desktop文件
 
-[Desktop Entry]
- Categories=Game;
- Encoding=UTF-8
- Exec=spark-webapp-runtime -p -u http://localhost:38324 -t &quot;Unfair Undyne&quot; -d &quot;不公平的安黛因，传说之下（Undertale）鱼姐战&quot; -w 720 -H 620 -i /opt/durapps/fairdyne/icon.png -r /opt/durapps/fairdyne/pages -P 38324
- Icon=/opt/durapps/fairdyne/icon.png
- MimeType=
- Name[zh\_CN]=Fairdyne
- Name=Fairdyne
- StartupWMClass=Fairdyne
- Terminal=False
- Type=Application
- X-Deepin-CreatedBy=com.deepin.dde.daemon.Launcher
- X-Deepin-AppID=fairdyne
+
+
+    [Desktop Entry]
+     Categories=Game;
+     Encoding=UTF-8
+     Exec=spark-webapp-runtime -p -u http://localhost:38324 -t "Unfair Undyne" -d "不公平的安黛因，传说之下（Undertale）鱼姐战" -w 720 -H 620 -i /opt/durapps/fairdyne/icon.png -r /opt/durapps/fairdyne/pages -P 38324
+     Icon=/opt/durapps/fairdyne/icon.png
+     MimeType=
+     Name[zh\_CN]=Fairdyne
+     Name=Fairdyne
+     StartupWMClass=Fairdyne
+     Terminal=False
+     Type=Application
+     X-Deepin-CreatedBy=com.deepin.dde.daemon.Launcher
+     X-Deepin-AppID=fairdyne
 
 附这款应用的下载链接
 
@@ -58,20 +60,17 @@
 
 只需要
 
-点击
-
-                            [   ](spk://store/development/spark-webapp-runtime-waker) ![](RackMultipart20201120-4-ntgpe9_html_64e2d0d76a9e2e60.gif)[
-](spk://store/development/spark-webapp-runtime-waker)
+`sudo apt install spark-webapp-runtime-waker`
 
 即可配置完成
 
 现在我们来测试一下
 
-spark-webapp-runtime
+`spark-webapp-runtime`
 
 如果你能看到
 
-![](RackMultipart20201120-4-ntgpe9_html_aaa9c7403a5f4461.gif)
+![](https://examine-spark.oss-cn-shanghai.aliyuncs.com/images/2020/11/14/612135b0-268e-11eb-881e-fff03f7ff5ca.png)
 
 那么恭喜你，配置完成了
 
@@ -81,11 +80,11 @@ spark-webapp-runtime
 
 你可以试试输入这一段
 
-spark-webapp-runtime 垃圾百度 https://www.baidu.com
+`spark-webapp-runtime 垃圾百度 https://www.baidu.com`
 
 看到了么？就是这么简单
 
-![](RackMultipart20201120-4-ntgpe9_html_e6fc0f985ad49a90.gif)
+![](https://storage.deepin.org/thread/202011190957234196_thread_OSva1QtI80i.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=Bbs-minioadmin%2F20201121%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20201121T051756Z&X-Amz-Expires=20&X-Amz-SignedHeaders=host&X-Amz-Signature=1ea2f455b1e066599660c0e868d64eba262e3345356ddfa78a638a57d10e9120)
 
 如果觉得默认的1024x768分辨率不合你心意
 
@@ -93,37 +92,37 @@ spark-webapp-runtime 垃圾百度 https://www.baidu.com
 
 比如这样
 
-spark-webapp-runtime 垃圾百度 https://www.baidu.com 768 1024
+`spark-webapp-runtime 垃圾百度 https://www.baidu.com 768 1024`
+![](https://storage.deepin.org/thread/202011190958558825_thread_SGQvVsatdOi.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=Bbs-minioadmin%2F20201121%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20201121T051756Z&X-Amz-Expires=20&X-Amz-SignedHeaders=host&X-Amz-Signature=9ffeef4aec3311c9a19766b7ebb922fff454b792c8cb3c3cbb9164fd7e6bd046)
 
-![](RackMultipart20201120-4-ntgpe9_html_ceac29ecac00fe92.gif)
 
 And你甚至可以使用本地的网页文件
 
 先找到文件
 
-    ![](RackMultipart20201120-4-ntgpe9_html_52dd6dcf6c40f06a.gif)
+ ![](https://s3.ax1x.com/2020/11/19/DugXGQ.png)
 
 在浏览器里打开
 
-![](RackMultipart20201120-4-ntgpe9_html_dd596e3d8bbe0c72.gif)
+![](https://s3.ax1x.com/2020/11/19/Du2pq0.png)
 
 复制粘贴
 
-spark-webapp-runtime 这是一个本地网页 file:///home/sy120zx/Desktop/Index%20of%20\_store\_games\_fairdyne\_.html 1024 768
+`spark-webapp-runtime 这是一个本地网页 file:///home/sy120zx/Desktop/Index%20of%20\_store\_games\_fairdyne\_.html 1024 768`
 
-![](RackMultipart20201120-4-ntgpe9_html_21550fd9e5d5f3d.gif)
+![](https://s3.ax1x.com/2020/11/19/Du2QIO.png)
 
 你还可以整一些生草的活
 
-spark-webapp-runtime 垃圾百度 https://www.baidu.com 768 84
+`spark-webapp-runtime 垃圾百度 https://www.baidu.com 768 84`
 
-![](RackMultipart20201120-4-ntgpe9_html_f41a3cae433a275e.gif)
+![](https://storage.deepin.org/thread/202011191000162762_thread_sbTYl51TF9Q.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=Bbs-minioadmin%2F20201121%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20201121T051756Z&X-Amz-Expires=20&X-Amz-SignedHeaders=host&X-Amz-Signature=ba183760a46a5c40ba92911621b7ce1a9e4f53f55243e61f4e22ef7f4e92d0b8)
 
 所以大家学会了么？spark-webapp-runtime的简单调用方式：
 
-spark-webapp-runtime [标题] [地址]
+`spark-webapp-runtime [标题] [地址]
 
-spark-webapp-runtime [标题] [地址] [宽] [高]
+`spark-webapp-runtime [标题] [地址] [宽] [高]``
 
 简易调用优点：简单，符合直觉，无需学习就可以使用，语法兼容spark-web-core（已弃用）
 
