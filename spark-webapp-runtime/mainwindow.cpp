@@ -7,6 +7,7 @@
 #include <QLayout>
 #include <QFileInfo>
 #include <QCloseEvent>
+#include <QDebug>
 
 MainWindow::MainWindow(QString szTitle,
                        QString szUrl,
