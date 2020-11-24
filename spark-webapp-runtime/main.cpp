@@ -25,6 +25,7 @@ int main(int argc, char *argv[])
     a.loadTranslator();
 
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
+    a.setApplicationVersion(QString::number(CURRENT_VER));
     a.setOrganizationName("spark-union");       // 添加组织名称，和商店主体的文件夹同在 ~/.local/share/spark-union 文件夹下
     a.setApplicationName("SparkWebAppRuntime"); // 这里不要翻译，否则 ~/.local/share 中文件夹名也会被翻译
 
@@ -38,7 +39,7 @@ int main(int argc, char *argv[])
     // ProductName
     dialog->setProductName(QString("<span>%1</span>").arg(DEFAULT_TITLE));
     // Version
-    dialog->setVersion(DApplication::buildVersion(QString("%1 %2").arg(QObject::tr("Version")).arg("1.5")));
+    dialog->setVersion(QString("%1 %2").arg(QObject::tr("Version:")).arg(CURRENT_VER));
     // CompanyLogo
     dialog->setCompanyLogo(QPixmap(":/images/Logo-Spark.png"));
     // Description

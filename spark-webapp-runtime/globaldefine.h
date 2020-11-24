@@ -16,4 +16,6 @@
 #define DEFAULT_ROOT    QString()
 #define DEFAULT_PORT    0
 
+#define CURRENT_VER     (1.6)
+
 #endif // GLOBALDEFINE_H
