@@ -1,9 +1,6 @@
 /*
  *
- * 如果你想学习更多有关知识，可以访问以下网址：
- * DTK相关文档地址：https://linuxdeepin.github.io/dtk
- * Deepin项目地址：https://github.com/linuxdeepin
- * 社区项目投递地址：https://gitee.com/deepin-opensource
+ * 星火网页应用运行环境
 */
 #include "mainwindow.h"
 
@@ -49,7 +46,7 @@ int main(int argc, char *argv[])
                             .arg(QObject::tr("Presented By Spark developers # HadesStudio"));
     dialog->setDescription(szDefaultDesc);
     // WebsiteName
-    dialog->setWebsiteName("spark-app.store");
+    dialog->setWebsiteName("The Spark Project");
     // WebsiteLink
     dialog->setWebsiteLink("https://www.spark-app.store/");
     // License
