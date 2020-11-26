@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
     // WebsiteName
     dialog->setWebsiteName("The Spark Project");
     // WebsiteLink
-    dialog->setWebsiteLink("https://www.spark-app.store/");
+    dialog->setWebsiteLink("https://gitee.com/deepin-community-store/");
     // License
     dialog->setLicense(QObject::tr("This program is open source under GPLv3"));    // 本程序按GPL第三版开源
 
