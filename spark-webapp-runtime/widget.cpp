@@ -1,61 +1,76 @@
 #include "widget.h"
-#include "ui_widget.h"
 
-#include <QWebEngineView>
-
-#include "webenginepage.h"
-
-Widget::Widget(QString szUrl, QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::Widget)
-    , m_webEngineView(nullptr)
+Widget::Widget(QString szUrl, QWidget *parent)
+    : QWidget(parent)
+    , m_webEngineView(new QWebEngineView)
+    , m_page(new WebEnginePage)
     , m_szUrl(szUrl)
+    , m_spinner(new DSpinner)
+    , main(new QHBoxLayout)
 {
-    ui->setupUi(this);
+    m_spinner->setFixedSize(96, 96);
 
-    m_webEngineView = new QWebEngineView(this);
+    setLayout(main);
+
     m_webEngineView->setObjectName(QStringLiteral("webEngineView"));
     m_webEngineView->setEnabled(true);
     m_webEngineView->setAutoFillBackground(false);
-    m_webEngineView->setProperty("url", QVariant(QUrl(QStringLiteral(""))));
-    m_webEngineView->setProperty("zoomFactor", QVariant(1));
+    m_webEngineView->setZoomFactor(1);
+    m_webEngineView->setPage(m_page);
 
-    ui->verticalLayout->addWidget(m_webEngineView);
-
-    WebEnginePage *page = new WebEnginePage();
-    m_webEngineView->setPage(page);
-
+    m_webEngineView->setUrl(QUrl(nullptr));
     if (!m_szUrl.isEmpty())
     {
         m_webEngineView->setUrl(QUrl(m_szUrl));
     }
+
+    connect(m_webEngineView, &QWebEngineView::loadStarted, this, &Widget::on_loadStarted);
+    connect(m_webEngineView, &QWebEngineView::loadFinished, this, &Widget::on_loadFinished);
 }
 
 Widget::~Widget()
 {
-    delete ui;
 }
 
 void Widget::goBack()
 {
-    if (m_webEngineView)
-    {
-        m_webEngineView->triggerPageAction(QWebEnginePage::Back);
-    }
+    m_webEngineView->back();
 }
 
 void Widget::goForward()
 {
-    if (m_webEngineView)
-    {
-        m_webEngineView->triggerPageAction(QWebEnginePage::Forward);
-    }
+    m_webEngineView->forward();
 }
 
 void Widget::refresh()
 {
-    if (m_webEngineView)
+    m_webEngineView->reload();
+}
+
+void Widget::clearLayout(QLayout *layout)
+{
+    QLayoutItem *item;
+    while ((item = layout->takeAt(0)) != nullptr)
     {
-        m_webEngineView->triggerPageAction(QWebEnginePage::Reload);
+        delete item;
     }
+}
+
+void Widget::on_loadStarted()
+{
+    clearLayout(main);
+
+    main->addStretch();
+    main->addWidget(m_spinner);
+    main->addStretch();
+
+    m_spinner->start();
+}
+
+void Widget::on_loadFinished()
+{
+    m_spinner->stop();
+    clearLayout(main);
+
+    main->addWidget(m_webEngineView);
 }

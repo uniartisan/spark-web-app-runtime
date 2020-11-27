@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
                             .arg(QObject::tr("Presented By Spark developers # HadesStudio"));
     dialog->setDescription(szDefaultDesc);
     // WebsiteName
-    dialog->setWebsiteName("The Spark Project");
+    dialog->setWebsiteName("Spark Project");
     // WebsiteLink
     dialog->setWebsiteLink("https://gitee.com/deepin-community-store/");
     // License

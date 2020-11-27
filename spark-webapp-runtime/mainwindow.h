@@ -25,18 +25,13 @@ public:
                QWidget *parent = nullptr);
     ~MainWindow();
 
-    void setIcon(QString);
-    void fixSize();
-    void hideButtons();
-
-signals:
-    void sigQuit();
+    void setIcon(QString szIconPath);
 
 private:
     Widget *m_widget;
     DAboutDialog *m_dialog;
 
-    DToolButton *btnBackward;
+    DToolButton *btnBack;
     DToolButton *btnForward;
     DToolButton *btnRefresh;
 
@@ -46,7 +41,13 @@ private:
 
     int m_width, m_height;
 
+    void fixSize();
+    void hideButtons();
+
     void closeEvent(QCloseEvent *event);
+
+signals:
+    void sigQuit();
 
 };
 

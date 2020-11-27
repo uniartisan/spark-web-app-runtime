@@ -2,7 +2,6 @@
 #define GLOBALDEFINE_H
 
 #include <QObject>
-#include <QUrl>
 
 #define DEFAULT_TITLE   QObject::tr("SparkWebAppRuntime")
 #define DEFAULT_URL     QString("qrc:/help/help.html")

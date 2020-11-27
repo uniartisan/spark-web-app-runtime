@@ -2,20 +2,23 @@
 #define WIDGET_H
 
 #include <QWidget>
+#include <QWebEngineView>
+#include <QWebEnginePage>
+#include <QWebEngineProfile>
+#include <QLayout>
 
-namespace Ui
-{
-    class Widget;
-}
+#include <DSpinner>
 
-class QWebEngineView;
+#include "webenginepage.h"
+
+DWIDGET_USE_NAMESPACE
 
 class Widget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit Widget(QString szUrl = QString(), QWidget *parent = nullptr);
+    explicit Widget(QString szUrl = nullptr, QWidget *parent = nullptr);
     ~Widget();
 
     void goBack();
@@ -23,10 +26,18 @@ public:
     void refresh();
 
 private:
-    Ui::Widget *ui;
-
     QWebEngineView *m_webEngineView;
+    WebEnginePage *m_page;
     QString m_szUrl;
+    DSpinner *m_spinner;
+
+    QHBoxLayout *main;
+
+    void clearLayout(QLayout *layout);
+
+private slots:
+    void on_loadStarted();
+    void on_loadFinished();
 };
 
 #endif // WIDGET_H
