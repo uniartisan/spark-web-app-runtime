@@ -4,6 +4,10 @@
 #include <DMainWindow>
 #include <DAboutDialog>
 #include <DToolButton>
+#include <DProgressBar>
+#include <DFloatingMessage>
+
+#include <QProcess>
 
 #include "widget.h"
 #include "globaldefine.h"
@@ -19,6 +23,7 @@ public:
                QString szUrl = DEFAULT_URL,
                int nWidth = DEFAULT_WIDTH,
                int nHeight = DEFAULT_HEIGHT,
+               bool nFullScreen = false,
                bool nFixSize = false,
                bool nHideButtons = false,
                DAboutDialog *dialog = nullptr,
@@ -36,15 +41,30 @@ private:
     DToolButton *btnRefresh;
 
     QMenu *m_menu;
+    QAction *m_fullScreen;
     QAction *m_fixSize;
     QAction *m_hideButtons;
 
+    DProgressBar *bar;
+    DFloatingMessage *message;
+
+    QProcess *process;
+
     int m_width, m_height;
 
+    void fullScreen();
     void fixSize();
     void hideButtons();
 
+    QString saveAs(QString fileName);
+
+    void keyPressEvent(QKeyEvent *event);
     void closeEvent(QCloseEvent *event);
+
+private slots:
+    void on_downloadStart(QWebEngineDownloadItem *item);
+    void on_downloadProgress(qint64 bytesReceived, qint64 bytesTotal);
+    void on_downloadFinish(QString filePath);
 
 signals:
     void sigQuit();

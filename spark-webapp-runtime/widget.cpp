@@ -32,6 +32,11 @@ Widget::~Widget()
 {
 }
 
+WebEnginePage *Widget::getPage()
+{
+    return m_page;
+}
+
 void Widget::goBack()
 {
     m_webEngineView->back();

@@ -21,6 +21,7 @@ public:
     explicit Widget(QString szUrl = nullptr, QWidget *parent = nullptr);
     ~Widget();
 
+    WebEnginePage *getPage();
     void goBack();
     void goForward();
     void refresh();

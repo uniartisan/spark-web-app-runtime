@@ -86,6 +86,10 @@ int main(int argc, char *argv[])
                                  QString::number(DEFAULT_HEIGHT));
     parser.addOption(optHeight);
 
+    QCommandLineOption optFullScreen("full-screen",
+                                  QObject::tr("Run in Fullscreen Mode. Default is false."));
+    parser.addOption(optFullScreen);
+
     QCommandLineOption optFixSize("fix-size",
                                   QObject::tr("Fix Window Size. Default is false."));
     parser.addOption(optFixSize);
@@ -139,6 +143,7 @@ int main(int argc, char *argv[])
     QString szUrl = DEFAULT_URL;
     int width = DEFAULT_WIDTH;
     int height = DEFAULT_HEIGHT;
+    bool fullScreen = false;
     bool fixSize = false;
     bool hideButtons = false;
     QString szIcon = DEFAULT_ICON;
@@ -163,6 +168,7 @@ int main(int argc, char *argv[])
                 szUrl = settings.value("SparkWebAppRuntime/URL", DEFAULT_TITLE).toString();
                 width = settings.value("SparkWebAppRuntime/Width", DEFAULT_WIDTH).toUInt();
                 height = settings.value("SparkWebAppRuntime/Height", DEFAULT_HEIGHT).toUInt();
+                fullScreen = settings.value("SparkWebAppRunTime/FullScreen", false).toBool();
                 fixSize = settings.value("SparkWebAppRunTime/FixSize", false).toBool();
                 hideButtons = settings.value("SparkWebAppRunTime/HideButtons", false).toBool();
                 szIcon = settings.value("SparkWebAppRuntime/Ico", DEFAULT_ICON).toString();
@@ -196,6 +202,10 @@ int main(int argc, char *argv[])
         height = parser.value(optHeight).toInt();
     }
 
+    if (parser.isSet(optFullScreen))
+    {
+        fullScreen = true;
+    }
     if (parser.isSet(optFixSize))
     {
         fixSize = true;
@@ -251,38 +261,47 @@ int main(int argc, char *argv[])
 
         if (argc > 5)
         {
-            fixSize = true;
+            fullScreen = true;
         }
         if (argc > 6)
+        {
+            fixSize = true;
+        }
+        if (argc > 7)
         {
             hideButtons = true;
         }
 
-        if (argc > 7)
+        if (argc > 8)
         {
             szIcon = QString(argv[7]);
         }
-        if (argc > 8)
+        if (argc > 9)
         {
             szDesc = QString("%1<br/><br/>%2").arg(QString(argv[8])).arg(szDefaultDesc);
         }
-        if (argc > 9)
+        if (argc > 10)
         {
             szRootPath = QString(argv[9]);
         }
-        if (argc > 10)
+        if (argc > 11)
         {
             u16Port = QString(argv[10]).toUInt();
         }
 #if SSL_SERVER
-        if (argc > 11)
+        if (argc > 12)
         {
             u16sslPort = QString(argv[11]).toUInt();
         }
 #endif
     }
 
-    MainWindow w(szTitle, szUrl, width, height, fixSize, hideButtons, dialog);
+    if(fixSize)
+    {
+        fullScreen = false; //  固定窗口大小时禁用全屏模式，避免标题栏按钮 BUG
+    }
+
+    MainWindow w(szTitle, szUrl, width, height, fullScreen, fixSize, hideButtons, dialog);
 
 #if SSL_SERVER
     if (!szRootPath.isEmpty() && u16Port > 0 && u16sslPort > 0)

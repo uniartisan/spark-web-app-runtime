@@ -4,14 +4,49 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="27"/>
+        <location filename="../mainwindow.cpp" line="35"/>
         <source>Fix Size</source>
         <translation>固定大小</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="28"/>
+        <location filename="../mainwindow.cpp" line="36"/>
         <source>Hide Buttons</source>
         <translation>隐藏按钮</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="142"/>
+        <source>%1Fullscreen Mode</source>
+        <translation>%1全屏模式</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="147"/>
+        <source>%1Windowed Mode</source>
+        <translation>%1窗口模式</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="182"/>
+        <source>Save As</source>
+        <translation>另存为</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="236"/>
+        <source>%1Start downloading %2</source>
+        <translation>%1开始下载 %2</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="258"/>
+        <source>Open</source>
+        <translation>打开</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="262"/>
+        <source>download finished.</source>
+        <translation>下载完成。</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="262"/>
+        <source>Show in file manager?</source>
+        <translation>是否在文件管理器中显示？</translation>
     </message>
 </context>
 <context>
@@ -63,41 +98,46 @@
     </message>
     <message>
         <location filename="../main.cpp" line="90"/>
+        <source>Run in Fullscreen Mode. Default is false.</source>
+        <translation>以全屏模式运行。默认关闭该功能。</translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="94"/>
         <source>Fix Window Size. Default is false.</source>
         <translation>固定窗口大小。默认关闭该功能。</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="94"/>
+        <location filename="../main.cpp" line="98"/>
         <source>Hide Control Buttons. Default is false.</source>
         <translation>隐藏控制按钮。默认关闭该此功能。</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="98"/>
+        <location filename="../main.cpp" line="102"/>
         <source>The ICON of Application.</source>
         <translation>设置应用的图标。</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="104"/>
+        <location filename="../main.cpp" line="108"/>
         <source>The Description of Application.</source>
         <translation>设置应用的描述信息。</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="110"/>
+        <location filename="../main.cpp" line="114"/>
         <source>The Configuration file of Application.</source>
         <translation>设置应用的配置文件。</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="116"/>
+        <location filename="../main.cpp" line="120"/>
         <source>The root path of the program web service.</source>
         <translation>设置内置 WebServer 的根路径。</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="123"/>
+        <location filename="../main.cpp" line="127"/>
         <source>The port number of the program web service.</source>
         <translation>设置内置 WebServer 的监听端口号。</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="130"/>
+        <location filename="../main.cpp" line="134"/>
         <source>The ssl port number of the program web service.</source>
         <translation>设置内置 WebServer 的 SSL 协议的监听端口号。</translation>
     </message>
@@ -105,19 +145,6 @@
         <location filename="../globaldefine.h" line="6"/>
         <source>SparkWebAppRuntime</source>
         <translation>星火网页应用运行环境</translation>
-    </message>
-</context>
-<context>
-    <name>WebEnginePage</name>
-    <message>
-        <location filename="../webenginepage.cpp" line="38"/>
-        <source>Start downloading...</source>
-        <translation>开始下载...</translation>
-    </message>
-    <message>
-        <location filename="../webenginepage.cpp" line="48"/>
-        <source>Download finished!</source>
-        <translation>下载完成！</translation>
     </message>
 </context>
 </TS>
