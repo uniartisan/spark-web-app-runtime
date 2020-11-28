@@ -4,6 +4,11 @@
 <context>
     <name>MainWindow</name>
     <message>
+        <location filename="../mainwindow.cpp" line="34"/>
+        <source>Full Screen</source>
+        <translation>全屏显示</translation>
+    </message>
+    <message>
         <location filename="../mainwindow.cpp" line="35"/>
         <source>Fix Size</source>
         <translation>固定大小</translation>

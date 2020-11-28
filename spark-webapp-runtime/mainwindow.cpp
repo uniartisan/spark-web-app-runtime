@@ -31,7 +31,7 @@ MainWindow::MainWindow(QString szTitle,
     , btnForward(new DToolButton(titlebar()))
     , btnRefresh(new DToolButton(titlebar()))
     , m_menu(new QMenu)
-    , m_fullScreen(new QAction("Full Screen"))
+    , m_fullScreen(new QAction(tr("Full Screen")))
     , m_fixSize(new QAction(tr("Fix Size")))
     , m_hideButtons(new QAction(tr("Hide Buttons")))
     , bar(new DProgressBar)
