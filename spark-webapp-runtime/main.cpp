@@ -20,8 +20,8 @@ int main(int argc, char *argv[])
     DApplication a(argc, argv);
 
     a.loadTranslator();
-
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
+
     a.setApplicationVersion(QString::number(CURRENT_VER));
     a.setOrganizationName("spark-union");       // 添加组织名称，和商店主体的文件夹同在 ~/.local/share/spark-union 文件夹下
     a.setApplicationName("SparkWebAppRuntime"); // 这里不要翻译，否则 ~/.local/share 中文件夹名也会被翻译
@@ -86,6 +86,10 @@ int main(int argc, char *argv[])
                                  QString::number(DEFAULT_HEIGHT));
     parser.addOption(optHeight);
 
+    QCommandLineOption optTray(QStringList() << "T" << "tray",
+                                  QObject::tr("Enable Tray Icon. Default is false."));
+    parser.addOption(optTray);
+
     QCommandLineOption optFullScreen("full-screen",
                                   QObject::tr("Run in Fullscreen Mode. Default is false."));
     parser.addOption(optFullScreen);
@@ -143,6 +147,7 @@ int main(int argc, char *argv[])
     QString szUrl = DEFAULT_URL;
     int width = DEFAULT_WIDTH;
     int height = DEFAULT_HEIGHT;
+    bool tray = false;
     bool fullScreen = false;
     bool fixSize = false;
     bool hideButtons = false;
@@ -168,6 +173,7 @@ int main(int argc, char *argv[])
                 szUrl = settings.value("SparkWebAppRuntime/URL", DEFAULT_TITLE).toString();
                 width = settings.value("SparkWebAppRuntime/Width", DEFAULT_WIDTH).toUInt();
                 height = settings.value("SparkWebAppRuntime/Height", DEFAULT_HEIGHT).toUInt();
+                tray = settings.value("SparkWebAppRunTime/Tray", false).toBool();
                 fullScreen = settings.value("SparkWebAppRunTime/FullScreen", false).toBool();
                 fixSize = settings.value("SparkWebAppRunTime/FixSize", false).toBool();
                 hideButtons = settings.value("SparkWebAppRunTime/HideButtons", false).toBool();
@@ -202,6 +208,10 @@ int main(int argc, char *argv[])
         height = parser.value(optHeight).toInt();
     }
 
+    if (parser.isSet(optTray))
+    {
+        tray = true;
+    }
     if (parser.isSet(optFullScreen))
     {
         fullScreen = true;
@@ -238,7 +248,7 @@ int main(int argc, char *argv[])
     }
 #endif
 
-    // 没设置 -p 并且参数个数>1 并且第一个参数不是-开始的
+    // 没设置 -p 并且参数个数 > 1 并且第一个参数不是 - 开始的
     if (!parser.isSet(optParser) && argc > 1 && !QString(argv[1]).startsWith("-"))
     {
         // 按照固定顺序级别最优先
@@ -261,35 +271,39 @@ int main(int argc, char *argv[])
 
         if (argc > 5)
         {
-            fullScreen = true;
+            tray = true;
         }
         if (argc > 6)
         {
-            fixSize = true;
+            fullScreen = true;
         }
         if (argc > 7)
+        {
+            fixSize = true;
+        }
+        if (argc > 8)
         {
             hideButtons = true;
         }
 
-        if (argc > 8)
+        if (argc > 9)
         {
             szIcon = QString(argv[7]);
         }
-        if (argc > 9)
+        if (argc > 10)
         {
             szDesc = QString("%1<br/><br/>%2").arg(QString(argv[8])).arg(szDefaultDesc);
         }
-        if (argc > 10)
+        if (argc > 11)
         {
             szRootPath = QString(argv[9]);
         }
-        if (argc > 11)
+        if (argc > 12)
         {
             u16Port = QString(argv[10]).toUInt();
         }
 #if SSL_SERVER
-        if (argc > 12)
+        if (argc > 13)
         {
             u16sslPort = QString(argv[11]).toUInt();
         }
@@ -298,10 +312,12 @@ int main(int argc, char *argv[])
 
     if(fixSize)
     {
-        fullScreen = false; //  固定窗口大小时禁用全屏模式，避免标题栏按钮 BUG
+        fullScreen = false;             // 固定窗口大小时禁用全屏模式，避免标题栏按钮 BUG
     }
 
-    MainWindow w(szTitle, szUrl, width, height, fullScreen, fixSize, hideButtons, dialog);
+    a.setQuitOnLastWindowClosed(!tray); // 启用托盘时，退出程序后服务不终止
+
+    MainWindow w(szTitle, szUrl, width, height, tray, fullScreen, fixSize, hideButtons, dialog);
 
 #if SSL_SERVER
     if (!szRootPath.isEmpty() && u16Port > 0 && u16sslPort > 0)

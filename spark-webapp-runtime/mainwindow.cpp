@@ -19,6 +19,7 @@ MainWindow::MainWindow(QString szTitle,
                        QString szUrl,
                        int nWidth,
                        int nHeight,
+                       bool tray,
                        bool nFullScreen,
                        bool nFixSize,
                        bool nHideButtons,
@@ -27,6 +28,7 @@ MainWindow::MainWindow(QString szTitle,
     : DMainWindow(parent)
     , m_widget(new Widget(szUrl))
     , m_dialog(dialog)
+    , m_tray(new QSystemTrayIcon)
     , btnBack(new DToolButton(titlebar()))
     , btnForward(new DToolButton(titlebar()))
     , btnRefresh(new DToolButton(titlebar()))
@@ -34,12 +36,19 @@ MainWindow::MainWindow(QString szTitle,
     , m_fullScreen(new QAction(tr("Full Screen")))
     , m_fixSize(new QAction(tr("Fix Size")))
     , m_hideButtons(new QAction(tr("Hide Buttons")))
+    , t_menu(new QMenu)
+    , t_show(new QAction(tr("Show MainWindow")))
+    , t_about(new QAction(tr("About")))
+    , t_exit(new QAction(tr("Exit")))
     , bar(new DProgressBar)
     , message(new DFloatingMessage(DFloatingMessage::ResidentType))
     , process(new QProcess)
+    , mtray(tray)
+    , mFixSize(nFixSize)
     , m_width(nWidth)
     , m_height(nHeight)
 {
+    /* 初始化 MainWindow */
     setCentralWidget(m_widget);
     centralWidget()->layout()->setContentsMargins(0, 0, 0, 0);
 
@@ -72,16 +81,35 @@ MainWindow::MainWindow(QString szTitle,
     m_hideButtons->setCheckable(true);
     m_hideButtons->setChecked(nHideButtons);
     m_hideButtons->setDisabled(nHideButtons);
-    m_menu->addAction(m_fullScreen);
-    m_menu->addAction(m_fixSize);
-    m_menu->addAction(m_hideButtons);
+    /* 命令行设置参数后 GUI 中隐藏对应选项 */
+    if(!nFixSize)
+    {
+        m_menu->addAction(m_fullScreen);
+        m_menu->addAction(m_fixSize);
+    }
+    if(!nHideButtons)
+    {
+        m_menu->addAction(m_hideButtons);
+    }
     titlebar()->setMenu(m_menu);
 
     titlebar()->setAutoHideOnFullscreen(true);
 
-    fullScreen();
     fixSize();
     hideButtons();
+
+    /* 初始化 TrayIcon */
+    t_menu->addAction(t_show);
+    t_menu->addAction(t_about);
+    t_menu->addAction(t_exit);
+    m_tray->setContextMenu(t_menu);
+    m_tray->setToolTip(szTitle);
+    m_tray->setIcon(QIcon(":/images/spark-webapp-runtime.svg"));
+
+    if(tray)
+    {
+        m_tray->show(); // 启用托盘时显示
+    }
 
     connect(btnBack, &DToolButton::clicked, this, [&]()
     {
@@ -109,6 +137,22 @@ MainWindow::MainWindow(QString szTitle,
         hideButtons();
     });
 
+    connect(t_show, &QAction::triggered, this, [=]()
+    {
+        this->activateWindow();
+        fixSize();
+    });
+    connect(t_about, &QAction::triggered, this, [=]()
+    {
+        m_dialog->activateWindow();
+        m_dialog->show();
+    });
+    connect(t_exit, &QAction::triggered, this, [=]()
+    {
+        exit(0);
+    });
+    connect(m_tray, &QSystemTrayIcon::activated, this, &MainWindow::trayIconActivated);
+
     connect(m_widget->getPage()->profile(), &QWebEngineProfile::downloadRequested, this, &MainWindow::on_downloadStart);
 }
 
@@ -117,6 +161,7 @@ MainWindow::~MainWindow()
     emit sigQuit();
     delete m_widget;
     delete m_dialog;
+    delete m_tray;
 }
 
 void MainWindow::setIcon(QString szIconPath)
@@ -126,6 +171,7 @@ void MainWindow::setIcon(QString szIconPath)
     {
         titlebar()->setIcon(QIcon(szIconPath));
         setWindowIcon(QIcon(szIconPath));
+        m_tray->setIcon(QIcon(szIconPath));
         qDebug() << szIconPath << "is Set!";
     }
     else
@@ -138,11 +184,19 @@ void MainWindow::fullScreen()
 {
     if(m_fullScreen->isChecked())
     {
+        m_fixSize->setChecked(false);
+        m_fixSize->setDisabled(true);
+        m_menu->update();
         showFullScreen();
         DMessageManager::instance()->sendMessage(this, QIcon::fromTheme("dialog-information").pixmap(64, 64), QString(tr("%1Fullscreen Mode")).arg("    "));
     }
     else
     {
+        if(!mFixSize)
+        {
+            m_fixSize->setDisabled(false);  // 命令行参数没有固定窗口大小时，窗口模式下允许手动选择固定窗口大小
+        }
+        m_menu->update();
         showNormal();
         DMessageManager::instance()->sendMessage(this, QIcon::fromTheme("dialog-information").pixmap(64, 64), QString(tr("%1Windowed Mode")).arg("    "));
     }
@@ -152,13 +206,20 @@ void MainWindow::fixSize()
 {
     if(m_fixSize->isChecked())
     {
-        setFixedSize(this->width(), this->height());
+        m_fullScreen->setChecked(false);
+        m_fullScreen->setDisabled(true);
+        m_menu->update();
+        setFixedSize(this->size());
+        /* 存在 BUG: 启用托盘图标后，若手动选择固定窗口大小，并且关闭窗口，再次打开时会丢失最大化按钮，且无法恢复。 */
     }
     else
     {
+        m_fullScreen->setDisabled(false);
+        m_menu->update();
         setMinimumSize(m_width, m_height);
         setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
     }
+    fullScreen();
 }
 
 void MainWindow::hideButtons()
@@ -182,14 +243,13 @@ QString MainWindow::saveAs(QString fileName)
     QString saveFile = QFileDialog::getSaveFileName(this, tr("Save As"), QDir::homePath() + "/Downloads/" + fileName);
     if(!saveFile.isEmpty())
     {
-        //  判断上层目录是否可写入
-        if(QFileInfo(QFileInfo(saveFile).absolutePath()).permissions().testFlag(QFile::WriteUser))
+        if(QFileInfo(QFileInfo(saveFile).absolutePath()).permissions().testFlag(QFile::WriteUser))  // 判断上层目录是否可写入
         {
             return saveFile;
         }
         else
         {
-            saveAs(fileName);
+            return saveAs(fileName);
         }
     }
     return nullptr;
@@ -197,9 +257,9 @@ QString MainWindow::saveAs(QString fileName)
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
-    if(m_fixSize->isEnabled())
+    if(!m_fixSize->isChecked()) // 固定窗口大小时禁止全屏
     {
-        if(event->key() == Qt::Key_F11)
+        if(event->key() == Qt::Key_F11) // 绑定键盘快捷键 F11
         {
             m_fullScreen->trigger();
             m_menu->update();
@@ -210,23 +270,41 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    m_dialog->close();
+    if(!mtray)
+    {
+        m_dialog->close();  // 不启用托盘时，关闭主窗口则关闭关于窗口
+    }
     event->accept();
+}
+
+void MainWindow::trayIconActivated(QSystemTrayIcon::ActivationReason reason)
+{
+    switch(reason)
+    {
+        /* 响应托盘点击事件 */
+        case QSystemTrayIcon::Trigger:
+            this->activateWindow();
+            fixSize();
+            break;
+        default:
+            break;
+    }
 }
 
 void MainWindow::on_downloadStart(QWebEngineDownloadItem *item)
 
 {
     QString fileName = QFileInfo(item->path()).fileName();
-    if(saveAs(fileName).isEmpty())
+    QString filePath = saveAs(fileName);
+    if(filePath.isEmpty())
     {
         return;
     }
-    item->setPath(saveAs(fileName));
-    QString filePath = QFileInfo(item->path()).absoluteFilePath();
+    item->setPath(filePath);
+    filePath = QFileInfo(item->path()).absoluteFilePath();
 
     connect(item, &QWebEngineDownloadItem::downloadProgress, this, &MainWindow::on_downloadProgress);
-    connect(item, &QWebEngineDownloadItem::finished, this, [=]
+    connect(item, &QWebEngineDownloadItem::finished, this, [=]()
     {
         on_downloadFinish(filePath);
     });
@@ -263,7 +341,7 @@ void MainWindow::on_downloadFinish(QString filePath)
     message->setWidget(button);
     DMessageManager::instance()->sendMessage(this, message);
 
-    connect(button, &DPushButton::clicked, this, [=]
+    connect(button, &DPushButton::clicked, this, [=]()
     {
         process->start("dde-file-manager --show-item " + filePath);
         message->hide();

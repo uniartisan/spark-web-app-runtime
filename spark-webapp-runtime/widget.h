@@ -21,14 +21,13 @@ public:
     explicit Widget(QString szUrl = nullptr, QWidget *parent = nullptr);
     ~Widget();
 
-    WebEnginePage *getPage();
+    QWebEnginePage *getPage();
     void goBack();
     void goForward();
     void refresh();
 
 private:
     QWebEngineView *m_webEngineView;
-    WebEnginePage *m_page;
     QString m_szUrl;
     DSpinner *m_spinner;
 

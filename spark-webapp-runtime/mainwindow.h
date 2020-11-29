@@ -7,6 +7,7 @@
 #include <DProgressBar>
 #include <DFloatingMessage>
 
+#include <QSystemTrayIcon>
 #include <QProcess>
 
 #include "widget.h"
@@ -23,6 +24,7 @@ public:
                QString szUrl = DEFAULT_URL,
                int nWidth = DEFAULT_WIDTH,
                int nHeight = DEFAULT_HEIGHT,
+               bool tray = false,
                bool nFullScreen = false,
                bool nFixSize = false,
                bool nHideButtons = false,
@@ -35,6 +37,7 @@ public:
 private:
     Widget *m_widget;
     DAboutDialog *m_dialog;
+    QSystemTrayIcon *m_tray;
 
     DToolButton *btnBack;
     DToolButton *btnForward;
@@ -45,11 +48,17 @@ private:
     QAction *m_fixSize;
     QAction *m_hideButtons;
 
+    QMenu *t_menu;
+    QAction *t_show;
+    QAction *t_about;
+    QAction *t_exit;
+
     DProgressBar *bar;
     DFloatingMessage *message;
 
     QProcess *process;
 
+    bool mtray, mFixSize;
     int m_width, m_height;
 
     void fullScreen();
@@ -62,6 +71,8 @@ private:
     void closeEvent(QCloseEvent *event);
 
 private slots:
+    void trayIconActivated(QSystemTrayIcon::ActivationReason reason);
+
     void on_downloadStart(QWebEngineDownloadItem *item);
     void on_downloadProgress(qint64 bytesReceived, qint64 bytesTotal);
     void on_downloadFinish(QString filePath);
