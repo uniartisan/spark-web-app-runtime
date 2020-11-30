@@ -288,24 +288,24 @@ int main(int argc, char *argv[])
 
         if (argc > 9)
         {
-            szIcon = QString(argv[7]);
+            szIcon = QString(argv[9]);
         }
         if (argc > 10)
         {
-            szDesc = QString("%1<br/><br/>%2").arg(QString(argv[8])).arg(szDefaultDesc);
+            szDesc = QString("%1<br/><br/>%2").arg(QString(argv[10])).arg(szDefaultDesc);
         }
         if (argc > 11)
         {
-            szRootPath = QString(argv[9]);
+            szRootPath = QString(argv[11]);
         }
         if (argc > 12)
         {
-            u16Port = QString(argv[10]).toUInt();
+            u16Port = QString(argv[12]).toUInt();
         }
 #if SSL_SERVER
         if (argc > 13)
         {
-            u16sslPort = QString(argv[11]).toUInt();
+            u16sslPort = QString(argv[13]).toUInt();
         }
 #endif
     }
