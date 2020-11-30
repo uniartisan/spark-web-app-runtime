@@ -15,6 +15,8 @@
  -u, --url \&lt;url\&gt; 设置要打开的目标 URL。默认为空。
  -w, --width \&lt;width\&gt; 设置程序运行的宽度。默认为 1024。
  -H, --height \&lt;height\&gt; 设置程序运行的高度。默认为 768。
+ -T, --tray 启用托盘图标。默认不启用。
+ --full-screen 以全屏模式运行。默认关闭该功能。
  --fix-size 固定窗口大小。默认关闭该功能。
  --hide-buttons 隐藏控制按钮。默认关闭该功能。
  -i, --ico \&lt;ico\&gt; 设置程序运行的图标。
