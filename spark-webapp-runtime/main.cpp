@@ -5,7 +5,6 @@
 #include "mainwindow.h"
 
 #include <DApplication>
-#include <DMainWindow>
 
 #include <QCommandLineParser>
 #include <QCommandLineOption>
