@@ -5,10 +5,13 @@
 #include <DAboutDialog>
 #include <DToolButton>
 #include <DProgressBar>
+#include <DPushButton>
 #include <DFloatingMessage>
 
 #include <QSystemTrayIcon>
+#include <QLayout>
 #include <QProcess>
+#include <QMutex>
 
 #include "widget.h"
 #include "globaldefine.h"
@@ -53,10 +56,18 @@ private:
     QAction *t_about;
     QAction *t_exit;
 
+    QWidget *downloadProgressBar;
     DProgressBar *bar;
+    DPushButton *pause;
+    DPushButton *resume;
+    DPushButton *cancel;
+    QHBoxLayout *progress;
     DFloatingMessage *message;
 
     QProcess *process;
+
+    QMutex mutex;       // 通过 Mutex 互斥量禁止同时下载多个文件（使用简单的 bool 变量应该也可以实现该功能？）
+    bool isCanceled;    // 判断是否为取消下载
 
     bool mtray, mFixSize;
     int m_width, m_height;
@@ -76,6 +87,9 @@ private slots:
     void on_downloadStart(QWebEngineDownloadItem *item);
     void on_downloadProgress(qint64 bytesReceived, qint64 bytesTotal);
     void on_downloadFinish(QString filePath);
+    void on_downloadPause(QWebEngineDownloadItem *item);
+    void on_downloadResume(QWebEngineDownloadItem *item);
+    void on_downloadCancel(QWebEngineDownloadItem *item);
 
 signals:
     void sigQuit();
