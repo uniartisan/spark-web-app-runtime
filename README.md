@@ -4,26 +4,41 @@
 
 
 ```shell
-用法：./spark-webapp-runtime [选项]
-描述: 星火网页应用运行时
+帮助:
+第一种用法:
 
-选项：
- -h, --help 显示这个此帮助。
- -v, --version 显示版本信息。
- -p, --parser 启用参数解析方式。默认顺序解析方式。
- -t, --title \&lt;title\&gt; 设置程序的运行标题。默认是 星火网页应用运行环境。
- -u, --url \&lt;url\&gt; 设置要打开的目标 URL。默认为空。
- -w, --width \&lt;width\&gt; 设置程序运行的宽度。默认为 1024。
- -H, --height \&lt;height\&gt; 设置程序运行的高度。默认为 768。
- -T, --tray 启用托盘图标。默认不启用。
- --full-screen 以全屏模式运行。默认关闭该功能。
- --fix-size 固定窗口大小。默认关闭该功能。
- --hide-buttons 隐藏控制按钮。默认关闭该功能。
- -i, --ico \&lt;ico\&gt; 设置程序运行的图标。
- -d, --desc \&lt;desc\&gt; 设置程序的描述信息。
- -c, --cfg \&lt;cfg\&gt; 设置程序运行的配置文件。
- -r, --root \&lt;root\&gt; 设置内置 WebServer 的根路径。
- -P, --port \&lt;port\&gt; 设置内置 WebServer 的监听端口号。
+spark-webapp-runtime 应用标题 目标网址 应用窗口宽度 应用窗口高度
+
+第二种用法:
+
+运行 "spark-webapp-runtime -h" 查看命令行帮助信息
+
+
+                用法：./spark-webapp-runtime [选项]
+                描述: 星火网页应用运行环境
+
+                选项：
+                  -h, --help             显示这个此帮助。
+                  -v, --version          显示版本信息。
+                  -p, --parser           启用参数解析方式。默认为顺序解析方式。
+                  -t, --title <title>    设置应用的标题。默认为
+                                         星火网页应用运行环境。
+                  -u, --url <url>        设置要打开的目标 URL。默认为空。
+                  -w, --width <width>    设置应用的窗口宽度。默认为 1024。
+                  -H, --height <height>  设置应用的窗口高度。默认为 768。
+                  -T, --tray             启用托盘图标。默认不启用。
+                  --full-screen          以全屏模式运行。默认关闭该功能。
+                  --fix-size             固定窗口大小。默认关闭该功能。
+                  --hide-buttons         隐藏控制按钮。默认关闭该功能。
+                  -i, --ico <ico>        设置应用的图标。
+                  -d, --desc <desc>      设置应用的描述信息。
+                  -c, --cfg <cfg>        设置应用的配置文件。
+                  -r, --root <root>      设置内置 WebServer 的根路径。
+                  -P, --port <port>      设置内置 WebServer 的监听端口号。
+            
+
+需要注意的是, 命令行会覆盖配置文件信息。
+
 ```
 
 这里给大家附送两个例子，帮助大家理解使用
