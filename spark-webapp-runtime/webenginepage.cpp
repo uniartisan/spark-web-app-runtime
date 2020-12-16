@@ -1,12 +1,5 @@
 #include "webenginepage.h"
 
-#include <QDir>
-#include <QDebug>
-
-#include <DMessageManager>
-
-DWIDGET_USE_NAMESPACE
-
 WebEnginePage::WebEnginePage(QObject *parent)
     : QWebEnginePage(parent)
 {

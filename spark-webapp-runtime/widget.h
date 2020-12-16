@@ -3,8 +3,6 @@
 
 #include <QWidget>
 #include <QWebEngineView>
-#include <QWebEnginePage>
-#include <QWebEngineProfile>
 #include <QLayout>
 
 #include <DSpinner>

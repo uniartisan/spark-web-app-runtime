@@ -9,7 +9,6 @@
 #include <DFloatingMessage>
 
 #include <QSystemTrayIcon>
-#include <QLayout>
 #include <QProcess>
 #include <QMutex>
 
@@ -63,8 +62,6 @@ private:
     DPushButton *cancel;
     QHBoxLayout *progress;
     DFloatingMessage *message;
-
-    QProcess *process;
 
     QMutex mutex;       // 通过 Mutex 互斥量禁止同时下载多个文件（使用简单的 bool 变量应该也可以实现该功能？）
     bool isCanceled;    // 判断是否为取消下载

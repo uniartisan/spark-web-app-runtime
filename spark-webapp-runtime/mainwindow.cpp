@@ -1,15 +1,14 @@
 ﻿#include "mainwindow.h"
 
-#include <DMainWindow>
 #include <DWidgetUtil>
 #include <DTitlebar>
 #include <DMessageManager>
+#include <DDesktopServices>
 
 #include <QFileInfo>
 #include <QFileDialog>
 #include <QDir>
 #include <QCloseEvent>
-#include <QDebug>
 
 #include "webenginepage.h"
 
@@ -45,7 +44,6 @@ MainWindow::MainWindow(QString szTitle,
     , cancel(new DPushButton(tr("Cancel")))
     , progress(new QHBoxLayout)
     , message(new DFloatingMessage(DFloatingMessage::ResidentType))
-    , process(new QProcess)
     , isCanceled(false)
     , mtray(tray)
     , mFixSize(nFixSize)
@@ -181,17 +179,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::setIcon(QString szIconPath)
 {
-    QFileInfo fi(szIconPath);
-    if (fi.exists())
+    if (QFileInfo(szIconPath).exists())
     {
         titlebar()->setIcon(QIcon(szIconPath));
         setWindowIcon(QIcon(szIconPath));
         m_tray->setIcon(QIcon(szIconPath));
-        qDebug() << szIconPath << "is Set!";
-    }
-    else
-    {
-        qDebug() << szIconPath << "is Not Exists!";
     }
 }
 
@@ -386,7 +378,7 @@ void MainWindow::on_downloadFinish(QString filePath)
 
         connect(button, &DPushButton::clicked, this, [=]()
         {
-            process->start("dde-file-manager --show-item " + filePath);
+            DDesktopServices::showFileItem(filePath);
             message->hide();
         });
     }

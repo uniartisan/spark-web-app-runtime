@@ -2,6 +2,7 @@
 #define WEBENGINEPAGE_H
 
 #include <QWebEnginePage>
+#include <QWebEngineProfile>
 #include <QObject>
 
 class WebEnginePage : public QWebEnginePage

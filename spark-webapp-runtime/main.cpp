@@ -164,8 +164,7 @@ int main(int argc, char *argv[])
         szCfgFile = parser.value(optCfgFile);
         if (!szCfgFile.isEmpty())
         {
-            QFileInfo fi(szCfgFile);
-            if (fi.exists())
+            if (QFileInfo(szCfgFile).exists())
             {
                 QSettings settings(szCfgFile, QSettings::IniFormat);
                 szTitle = settings.value("SparkWebAppRuntime/Title", DEFAULT_TITLE).toString();
