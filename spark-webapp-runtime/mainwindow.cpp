@@ -167,6 +167,11 @@ MainWindow::MainWindow(QString szTitle,
     connect(m_tray, &QSystemTrayIcon::activated, this, &MainWindow::trayIconActivated);
 
     connect(m_widget->getPage()->profile(), &QWebEngineProfile::downloadRequested, this, &MainWindow::on_downloadStart);
+
+    connect(m_widget->getPage(), &QWebEnginePage::windowCloseRequested, this, [=]()
+    {
+        this->close();
+    });
 }
 
 MainWindow::~MainWindow()
@@ -195,7 +200,7 @@ void MainWindow::fullScreen()
         m_fixSize->setDisabled(true);
         m_menu->update();
         showFullScreen();
-        DMessageManager::instance()->sendMessage(this, QIcon::fromTheme("dialog-information").pixmap(64, 64), QString(tr("%1Fullscreen Mode")).arg("    "));
+        // DMessageManager::instance()->sendMessage(this, QIcon::fromTheme("dialog-information").pixmap(64, 64), QString(tr("%1Fullscreen Mode")).arg("    "));
     }
     else
     {
@@ -205,7 +210,7 @@ void MainWindow::fullScreen()
         }
         m_menu->update();
         showNormal();
-        DMessageManager::instance()->sendMessage(this, QIcon::fromTheme("dialog-information").pixmap(64, 64), QString(tr("%1Windowed Mode")).arg("    "));
+        // DMessageManager::instance()->sendMessage(this, QIcon::fromTheme("dialog-information").pixmap(64, 64), QString(tr("%1Windowed Mode")).arg("    "));
     }
 }
 
