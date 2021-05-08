@@ -312,6 +312,7 @@ void MainWindow::on_downloadStart(QWebEngineDownloadItem *item)
         QString filePath = saveAs(fileName);
         if(filePath.isEmpty())
         {
+            mutex.unlock();
             return;
         }
         item->setPath(filePath);
