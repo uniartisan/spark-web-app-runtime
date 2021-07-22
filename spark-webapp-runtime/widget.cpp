@@ -2,7 +2,7 @@
 
 Widget::Widget(QString szUrl, QWidget *parent)
     : QWidget(parent)
-    , m_webEngineView(new QWebEngineView)
+    , m_webEngineView(new WebEngineView)
     , m_szUrl(szUrl)
     , m_spinner(new DSpinner)
     , main(new QHBoxLayout)
@@ -16,7 +16,7 @@ Widget::Widget(QString szUrl, QWidget *parent)
     m_webEngineView->setAutoFillBackground(false);
     m_webEngineView->setZoomFactor(1);
 
-    WebEnginePage *page = new WebEnginePage;
+    QWebEnginePage *page = new QWebEnginePage;
     m_webEngineView->setPage(page);
 
     m_webEngineView->setUrl(QUrl(nullptr));

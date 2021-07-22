@@ -10,7 +10,7 @@
 #include <QDir>
 #include <QCloseEvent>
 
-#include "webenginepage.h"
+#include "webengineview.h"
 
 MainWindow::MainWindow(QString szTitle,
                        QString szUrl,

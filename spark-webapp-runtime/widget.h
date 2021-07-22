@@ -2,12 +2,13 @@
 #define WIDGET_H
 
 #include <QWidget>
+#include <QWebEngineProfile>
 #include <QWebEngineView>
 #include <QLayout>
 
 #include <DSpinner>
 
-#include "webenginepage.h"
+#include "webengineview.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -25,7 +26,7 @@ public:
     void refresh();
 
 private:
-    QWebEngineView *m_webEngineView;
+    WebEngineView *m_webEngineView;
     QString m_szUrl;
     DSpinner *m_spinner;
 
