@@ -76,7 +76,7 @@ MainWindow::MainWindow(QString szTitle,
 
     m_fullScreen->setCheckable(true);
     m_fullScreen->setChecked(nFullScreen);
-    m_fullScreen->setDisabled(nFixSize);    //  固定窗口大小时禁用全屏模式，避免标题栏按钮 BUG
+    m_fullScreen->setDisabled(nFixSize); //  固定窗口大小时禁用全屏模式，避免标题栏按钮 BUG
     m_fixSize->setCheckable(true);
     m_fixSize->setChecked(nFixSize);
     m_fixSize->setDisabled(nFixSize);
@@ -84,13 +84,11 @@ MainWindow::MainWindow(QString szTitle,
     m_hideButtons->setChecked(nHideButtons);
     m_hideButtons->setDisabled(nHideButtons);
     /* 命令行设置参数后 GUI 中隐藏对应选项 */
-    if(!nFixSize)
-    {
+    if (!nFixSize) {
         m_menu->addAction(m_fullScreen);
         m_menu->addAction(m_fixSize);
     }
-    if(!nHideButtons)
-    {
+    if (!nHideButtons) {
         m_menu->addAction(m_hideButtons);
     }
     titlebar()->setMenu(m_menu);
@@ -108,8 +106,7 @@ MainWindow::MainWindow(QString szTitle,
     m_tray->setToolTip(szTitle);
     m_tray->setIcon(QIcon(":/images/spark-webapp-runtime.svg"));
 
-    if(tray)
-    {
+    if (tray) {
         m_tray->show(); // 启用托盘时显示
     }
 
@@ -124,52 +121,42 @@ MainWindow::MainWindow(QString szTitle,
     message->setIcon(QIcon::fromTheme("deepin-download").pixmap(64, 64));
     message->setWidget(downloadProgressBar);
 
-    connect(btnBack, &DToolButton::clicked, this, [&]()
-    {
+    connect(btnBack, &DToolButton::clicked, this, [&]() {
         m_widget->goBack();
     });
-    connect(btnForward, &DToolButton::clicked, this, [&]()
-    {
+    connect(btnForward, &DToolButton::clicked, this, [&]() {
         m_widget->goForward();
     });
-    connect(btnRefresh, &DToolButton::clicked, this, [&]()
-    {
+    connect(btnRefresh, &DToolButton::clicked, this, [&]() {
         m_widget->refresh();
     });
 
-    connect(m_fullScreen, &QAction::triggered, this, [=]()
-    {
+    connect(m_fullScreen, &QAction::triggered, this, [=]() {
         fullScreen();
     });
-    connect(m_fixSize, &QAction::triggered, this, [=]()
-    {
+    connect(m_fixSize, &QAction::triggered, this, [=]() {
         fixSize();
     });
-    connect(m_hideButtons, &QAction::triggered, this, [=]()
-    {
+    connect(m_hideButtons, &QAction::triggered, this, [=]() {
         hideButtons();
     });
 
-    connect(t_show, &QAction::triggered, this, [=]()
-    {
+    connect(t_show, &QAction::triggered, this, [=]() {
         this->activateWindow();
         fixSize();
     });
-    connect(t_about, &QAction::triggered, this, [=]()
-    {
+    connect(t_about, &QAction::triggered, this, [=]() {
         m_dialog->activateWindow();
         m_dialog->show();
     });
-    connect(t_exit, &QAction::triggered, this, [=]()
-    {
+    connect(t_exit, &QAction::triggered, this, [=]() {
         exit(0);
     });
     connect(m_tray, &QSystemTrayIcon::activated, this, &MainWindow::trayIconActivated);
 
     connect(m_widget->getPage()->profile(), &QWebEngineProfile::downloadRequested, this, &MainWindow::on_downloadStart);
 
-    connect(m_widget->getPage(), &QWebEnginePage::windowCloseRequested, this, [=]()
-    {
+    connect(m_widget->getPage(), &QWebEnginePage::windowCloseRequested, this, [=]() {
         this->close();
     });
 }
@@ -184,29 +171,58 @@ MainWindow::~MainWindow()
 
 void MainWindow::setIcon(QString szIconPath)
 {
-    if (QFileInfo(szIconPath).exists())
-    {
+    if (QFileInfo(szIconPath).exists()) {
         titlebar()->setIcon(QIcon(szIconPath));
         setWindowIcon(QIcon(szIconPath));
         m_tray->setIcon(QIcon(szIconPath));
     }
 }
 
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    if (!m_fixSize->isChecked()) // 固定窗口大小时禁止全屏
+    {
+        if (event->key() == Qt::Key_F11) // 绑定键盘快捷键 F11
+        {
+            m_fullScreen->trigger();
+            m_menu->update();
+        }
+    }
+    event->accept();
+}
+
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    if (this->isFullScreen()) {
+        m_fullScreen->setChecked(true);
+    } else {
+        m_fullScreen->setChecked(false);
+        if (!mFixSize) {
+            m_fixSize->setEnabled(true); // 命令行参数没有固定窗口大小时，窗口模式下允许手动选择固定窗口大小
+        }
+    }
+    DMainWindow::resizeEvent(event);
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if (!mtray) {
+        m_dialog->close(); // 不启用托盘时，关闭主窗口则关闭关于窗口
+    }
+    event->accept();
+}
+
 void MainWindow::fullScreen()
 {
-    if(m_fullScreen->isChecked())
-    {
+    if (m_fullScreen->isChecked()) {
         m_fixSize->setChecked(false);
         m_fixSize->setDisabled(true);
         m_menu->update();
         showFullScreen();
         // DMessageManager::instance()->sendMessage(this, QIcon::fromTheme("dialog-information").pixmap(64, 64), QString(tr("%1Fullscreen Mode")).arg("    "));
-    }
-    else
-    {
-        if(!mFixSize)
-        {
-            m_fixSize->setDisabled(false);  // 命令行参数没有固定窗口大小时，窗口模式下允许手动选择固定窗口大小
+    } else {
+        if (!mFixSize) {
+            m_fixSize->setDisabled(false); // 命令行参数没有固定窗口大小时，窗口模式下允许手动选择固定窗口大小
         }
         m_menu->update();
         showNormal();
@@ -216,16 +232,13 @@ void MainWindow::fullScreen()
 
 void MainWindow::fixSize()
 {
-    if(m_fixSize->isChecked())
-    {
+    if (m_fixSize->isChecked()) {
         m_fullScreen->setChecked(false);
         m_fullScreen->setDisabled(true);
         m_menu->update();
         setFixedSize(this->size());
         /* 存在 BUG: 启用托盘图标后，若手动选择固定窗口大小，并且关闭窗口，再次打开时会丢失最大化按钮，且无法恢复。 */
-    }
-    else
-    {
+    } else {
         m_fullScreen->setDisabled(false);
         m_menu->update();
         setMinimumSize(m_width, m_height);
@@ -236,14 +249,11 @@ void MainWindow::fixSize()
 
 void MainWindow::hideButtons()
 {
-    if(m_hideButtons->isChecked())
-    {
+    if (m_hideButtons->isChecked()) {
         btnBack->hide();
         btnForward->hide();
         btnRefresh->hide();
-    }
-    else
-    {
+    } else {
         btnBack->show();
         btnForward->show();
         btnRefresh->show();
@@ -253,65 +263,37 @@ void MainWindow::hideButtons()
 QString MainWindow::saveAs(QString fileName)
 {
     QString saveFile = QFileDialog::getSaveFileName(this, tr("Save As"), QDir::homePath() + "/Downloads/" + fileName);
-    if(!saveFile.isEmpty())
-    {
-        if(QFileInfo(QFileInfo(saveFile).absolutePath()).permissions().testFlag(QFile::WriteUser))  // 判断上层目录是否可写入
+    if (!saveFile.isEmpty()) {
+        if (QFileInfo(QFileInfo(saveFile).absolutePath()).permissions().testFlag(QFile::WriteUser)) // 判断上层目录是否可写入
         {
             return saveFile;
-        }
-        else
-        {
+        } else {
             return saveAs(fileName);
         }
     }
     return nullptr;
 }
 
-void MainWindow::keyPressEvent(QKeyEvent *event)
-{
-    if(!m_fixSize->isChecked()) // 固定窗口大小时禁止全屏
-    {
-        if(event->key() == Qt::Key_F11) // 绑定键盘快捷键 F11
-        {
-            m_fullScreen->trigger();
-            m_menu->update();
-        }
-        event->accept();
-    }
-}
-
-void MainWindow::closeEvent(QCloseEvent *event)
-{
-    if(!mtray)
-    {
-        m_dialog->close();  // 不启用托盘时，关闭主窗口则关闭关于窗口
-    }
-    event->accept();
-}
-
 void MainWindow::trayIconActivated(QSystemTrayIcon::ActivationReason reason)
 {
-    switch(reason)
-    {
-        /* 响应托盘点击事件 */
-        case QSystemTrayIcon::Trigger:
-            this->activateWindow();
-            fixSize();
-            break;
-        default:
-            break;
+    switch (reason) {
+    /* 响应托盘点击事件 */
+    case QSystemTrayIcon::Trigger:
+        this->activateWindow();
+        fixSize();
+        break;
+    default:
+        break;
     }
 }
 
 void MainWindow::on_downloadStart(QWebEngineDownloadItem *item)
 {
     /* 尝试加锁互斥量，禁止同时下载多个文件 */
-    if(mutex.tryLock())
-    {
+    if (mutex.tryLock()) {
         QString fileName = QFileInfo(item->path()).fileName();
         QString filePath = saveAs(fileName);
-        if(filePath.isEmpty())
-        {
+        if (filePath.isEmpty()) {
             mutex.unlock();
             return;
         }
@@ -319,21 +301,17 @@ void MainWindow::on_downloadStart(QWebEngineDownloadItem *item)
         filePath = QFileInfo(item->path()).absoluteFilePath();
 
         connect(item, &QWebEngineDownloadItem::downloadProgress, this, &MainWindow::on_downloadProgress);
-        connect(item, &QWebEngineDownloadItem::finished, this, [=]()
-        {
+        connect(item, &QWebEngineDownloadItem::finished, this, [=]() {
             on_downloadFinish(filePath);
         });
 
-        connect(pause, &DPushButton::clicked, this, [=]()
-        {
+        connect(pause, &DPushButton::clicked, this, [=]() {
             on_downloadPause(item);
         });
-        connect(resume, &DPushButton::clicked, this, [=]()
-        {
+        connect(resume, &DPushButton::clicked, this, [=]() {
             on_downloadResume(item);
         });
-        connect(cancel, &DPushButton::clicked, this, [=]()
-        {
+        connect(cancel, &DPushButton::clicked, this, [=]() {
             on_downloadCancel(item);
         });
 
@@ -348,10 +326,8 @@ void MainWindow::on_downloadStart(QWebEngineDownloadItem *item)
         isCanceled = false;
         resume->hide();
         pause->show();
-        this->message->show();  // 上一次下载完成后隐藏了进度条，这里要重新显示
-    }
-    else
-    {
+        this->message->show(); // 上一次下载完成后隐藏了进度条，这里要重新显示
+    } else {
         DMessageManager::instance()->sendMessage(this, QIcon::fromTheme("dialog-cancel").pixmap(64, 64), QString(tr("%1Wait for previous download to complete!")).arg("    "));
     }
 }
@@ -372,7 +348,7 @@ void MainWindow::on_downloadFinish(QString filePath)
 
     message->hide();
 
-    if(!isCanceled) // 下载完成显示提示信息
+    if (!isCanceled) // 下载完成显示提示信息
     {
         DPushButton *button = new DPushButton(tr("Open"));
 
@@ -382,8 +358,7 @@ void MainWindow::on_downloadFinish(QString filePath)
         message->setWidget(button);
         DMessageManager::instance()->sendMessage(this, message);
 
-        connect(button, &DPushButton::clicked, this, [=]()
-        {
+        connect(button, &DPushButton::clicked, this, [=]() {
             DDesktopServices::showFileItem(filePath);
             message->hide();
         });
@@ -410,7 +385,7 @@ void MainWindow::on_downloadResume(QWebEngineDownloadItem *item)
 
 void MainWindow::on_downloadCancel(QWebEngineDownloadItem *item)
 {
-    isCanceled = true;  // 取消下载
+    isCanceled = true; // 取消下载
     item->cancel();
 
     mutex.unlock();

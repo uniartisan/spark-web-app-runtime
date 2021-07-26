@@ -49,47 +49,45 @@
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="198"/>
         <source>%1Fullscreen Mode</source>
-        <translation>%1全屏模式</translation>
+        <translation type="vanished">%1全屏模式</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="208"/>
         <source>%1Windowed Mode</source>
-        <translation>%1窗口模式</translation>
+        <translation type="vanished">%1窗口模式</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="250"/>
+        <location filename="../mainwindow.cpp" line="265"/>
         <source>Save As</source>
         <translation>另存为</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="336"/>
+        <location filename="../mainwindow.cpp" line="320"/>
         <source>%1Start downloading %2</source>
         <translation>%1开始下载 %2</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="349"/>
+        <location filename="../mainwindow.cpp" line="331"/>
         <source>%1Wait for previous download to complete!</source>
         <translation>%1请等待上一个下载任务完成！</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="371"/>
+        <location filename="../mainwindow.cpp" line="353"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="375"/>
+        <location filename="../mainwindow.cpp" line="357"/>
         <source>download finished.</source>
         <translation>下载完成。</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="375"/>
+        <location filename="../mainwindow.cpp" line="357"/>
         <source>Show in file manager?</source>
         <translation>是否在文件管理器中显示？</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="413"/>
+        <location filename="../mainwindow.cpp" line="394"/>
         <source>%1Download canceled!</source>
         <translation>%1下载取消！</translation>
     </message>
@@ -117,77 +115,77 @@
         <translation>描述：%1</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="61"/>
+        <location filename="../main.cpp" line="62"/>
         <source>Enable CommandLineParser. Default is false.</source>
         <translation>启用参数解析方式。默认顺序解析方式。</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="65"/>
+        <location filename="../main.cpp" line="67"/>
         <source>The Title of Application. Default is %1.</source>
         <translation>设置程序的运行标题。默认是 %1。</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="71"/>
+        <location filename="../main.cpp" line="74"/>
         <source>The target URL. Default is Blank.</source>
         <translation>设置要打开的目标 URL。默认是空。</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="77"/>
+        <location filename="../main.cpp" line="81"/>
         <source>The Width of Application. Default is %1.</source>
         <translation>设置应用的窗口宽度。默认是 %1。</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="83"/>
+        <location filename="../main.cpp" line="88"/>
         <source>The Height of Application. Default is %1.</source>
         <translation>设置应用的窗口高度。默认是 %1。</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="89"/>
+        <location filename="../main.cpp" line="95"/>
         <source>Enable Tray Icon. Default is false.</source>
         <translation>启用托盘图标。默认不启用。</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="93"/>
+        <location filename="../main.cpp" line="99"/>
         <source>Run in Fullscreen Mode. Default is false.</source>
         <translation>以全屏模式运行。默认关闭该功能。</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="97"/>
+        <location filename="../main.cpp" line="103"/>
         <source>Fix Window Size. Default is false.</source>
         <translation>固定窗口大小。默认关闭该功能。</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="101"/>
+        <location filename="../main.cpp" line="107"/>
         <source>Hide Control Buttons. Default is false.</source>
         <translation>隐藏控制按钮。默认关闭该此功能。</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="105"/>
+        <location filename="../main.cpp" line="112"/>
         <source>The ICON of Application.</source>
         <translation>设置应用的图标。</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="111"/>
+        <location filename="../main.cpp" line="119"/>
         <source>The Description of Application.</source>
         <translation>设置应用的描述信息。</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="117"/>
+        <location filename="../main.cpp" line="126"/>
         <source>The Configuration file of Application.</source>
         <translation>设置应用的配置文件。</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="123"/>
+        <location filename="../main.cpp" line="133"/>
         <source>The root path of the program web service.</source>
         <translation>设置内置 WebServer 的根路径。</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="130"/>
+        <location filename="../main.cpp" line="140"/>
         <source>The port number of the program web service.</source>
         <translation>设置内置 WebServer 的监听端口号。</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="137"/>
+        <location filename="../main.cpp" line="148"/>
         <source>The ssl port number of the program web service.</source>
         <translation>设置内置 WebServer 的 SSL 协议的监听端口号。</translation>
     </message>

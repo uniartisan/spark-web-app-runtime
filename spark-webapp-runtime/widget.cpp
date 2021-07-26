@@ -14,14 +14,13 @@ Widget::Widget(QString szUrl, QWidget *parent)
     m_webEngineView->setObjectName(QStringLiteral("webEngineView"));
     m_webEngineView->setEnabled(true);
     m_webEngineView->setAutoFillBackground(false);
-    m_webEngineView->setZoomFactor(1);
+    m_webEngineView->setZoomFactor(1.0);
 
     QWebEnginePage *page = new QWebEnginePage;
     m_webEngineView->setPage(page);
 
     m_webEngineView->setUrl(QUrl(nullptr));
-    if (!m_szUrl.isEmpty())
-    {
+    if (!m_szUrl.isEmpty()) {
         m_webEngineView->setUrl(QUrl(m_szUrl));
     }
 
@@ -56,8 +55,7 @@ void Widget::refresh()
 void Widget::clearLayout(QLayout *layout)
 {
     QLayoutItem *item;
-    while ((item = layout->takeAt(0)) != nullptr)
-    {
+    while ((item = layout->takeAt(0)) != nullptr) {
         delete item;
     }
 }

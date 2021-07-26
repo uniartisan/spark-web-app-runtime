@@ -36,6 +36,11 @@ public:
 
     void setIcon(QString szIconPath);
 
+protected:
+    void keyPressEvent(QKeyEvent *event);
+    void resizeEvent(QResizeEvent *event);
+    void closeEvent(QCloseEvent *event);
+
 private:
     Widget *m_widget;
     DAboutDialog *m_dialog;
@@ -63,8 +68,8 @@ private:
     QHBoxLayout *progress;
     DFloatingMessage *message;
 
-    QMutex mutex;       // 通过 Mutex 互斥量禁止同时下载多个文件（使用简单的 bool 变量应该也可以实现该功能？）
-    bool isCanceled;    // 判断是否为取消下载
+    QMutex mutex; // 通过 Mutex 互斥量禁止同时下载多个文件（使用简单的 bool 变量应该也可以实现该功能？）
+    bool isCanceled; // 判断是否为取消下载
 
     bool mtray, mFixSize;
     int m_width, m_height;
@@ -74,9 +79,6 @@ private:
     void hideButtons();
 
     QString saveAs(QString fileName);
-
-    void keyPressEvent(QKeyEvent *event);
-    void closeEvent(QCloseEvent *event);
 
 private slots:
     void trayIconActivated(QSystemTrayIcon::ActivationReason reason);
@@ -90,7 +92,6 @@ private slots:
 
 signals:
     void sigQuit();
-
 };
 
 #endif // MAINWINDOW_H
