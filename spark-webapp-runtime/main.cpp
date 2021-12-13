@@ -14,17 +14,19 @@
 #include "globaldefine.h"
 #include "httpd.h"
 
+DWIDGET_USE_NAMESPACE
 int main(int argc, char *argv[])
 {
     DApplication a(argc, argv);
-
+	
     a.loadTranslator();
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
     a.setApplicationVersion(QString::number(CURRENT_VER));
     a.setOrganizationName("spark-union"); // 添加组织名称，和商店主体的文件夹同在 ~/.local/share/spark-union 文件夹下
     a.setApplicationName("SparkWebAppRuntime"); // 这里不要翻译，否则 ~/.local/share 中文件夹名也会被翻译
-
+QDialog *dialog ;
+/* Customized DAboutDialog (Can't work on other distro like Ubuntu...)
     DAboutDialog *dialog = new DAboutDialog;
     a.setAboutDialog(dialog);
 
@@ -39,17 +41,21 @@ int main(int argc, char *argv[])
     // CompanyLogo
     dialog->setCompanyLogo(QPixmap(":/images/Logo-Spark.png"));
     // Description
+*/
     QString szDefaultDesc = QString("<a href='https://gitee.com/deepin-community-store/spark-web-app-runtime'><span style='font-size:12pt;font-weight:500;'>%1</span></a><br/>"
                                     "<span style='font-size:12pt;'>%2</span>")
                                 .arg(DEFAULT_TITLE)
                                 .arg(QObject::tr("Presented By Spark developers # HadesStudio"));
-    dialog->setDescription(szDefaultDesc);
+/*    
+dialog->setDescription(szDefaultDesc);
     // WebsiteName
     dialog->setWebsiteName("Spark Project");
     // WebsiteLink
-    dialog->setWebsiteLink("https://gitee.com/deepin-community-store/");
+    dialog->setWebsiteLink("https://git
+ee.com/deepin-community-store/");
     // License
     dialog->setLicense(QObject::tr("This program is open source under GPLv3")); // 本程序按GPL第三版开源
+*/
 
     QCommandLineParser parser;
 
@@ -295,7 +301,7 @@ int main(int argc, char *argv[])
 
     a.setQuitOnLastWindowClosed(!tray); // 启用托盘时，退出程序后服务不终止
 
-    MainWindow w(szTitle, szUrl, width, height, tray, fullScreen, fixSize, hideButtons, dialog);
+    MainWindow w(szTitle, szUrl, width, height, tray, fullScreen, fixSize, hideButtons,dialog);
     // qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-features=UseModernMediaControls");
 
 #if SSL_SERVER
@@ -315,7 +321,7 @@ int main(int argc, char *argv[])
         szIcon = parser.value(optIcon);
     }
 
-    if (!szIcon.isEmpty()) {
+/*    if (!szIcon.isEmpty()) {
         dialog->setWindowIcon(QIcon(szIcon));
         dialog->setProductIcon(QIcon(szIcon));
         w.setIcon(szIcon);
@@ -323,7 +329,7 @@ int main(int argc, char *argv[])
     if (!szDesc.isEmpty()) {
         dialog->setDescription(szDesc);
     }
-
+*/
     w.show();
     return a.exec();
 }
