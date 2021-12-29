@@ -1,4 +1,4 @@
-﻿#include "mainwindow.h"
+#include "mainwindow.h"
 
 #include <DWidgetUtil>
 #include <DTitlebar>
@@ -20,11 +20,11 @@ MainWindow::MainWindow(QString szTitle,
                        bool nFullScreen,
                        bool nFixSize,
                        bool nHideButtons,
-                       DAboutDialog *dialog,
+                       QDialog *dialog,
                        QWidget *parent)
     : DMainWindow(parent)
     , m_widget(new Widget(szUrl))
-    , m_dialog(dialog)
+//    , m_dialog(dialog)
     , m_tray(new QSystemTrayIcon)
     , btnBack(new DToolButton(titlebar()))
     , btnForward(new DToolButton(titlebar()))
@@ -47,8 +47,8 @@ MainWindow::MainWindow(QString szTitle,
     , isCanceled(false)
     , mtray(tray)
     , mFixSize(nFixSize)
-    , m_width(nWidth)
-    , m_height(nHeight)
+   , m_width(nWidth)
+   , m_height(nHeight)
 {
     /* 初始化 MainWindow */
     setCentralWidget(m_widget);
@@ -205,13 +205,15 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
+{}
+/*
 {
     if (!mtray) {
         m_dialog->close(); // 不启用托盘时，关闭主窗口则关闭关于窗口
     }
     event->accept();
 }
-
+*/
 void MainWindow::fullScreen()
 {
     if (m_fullScreen->isChecked()) {

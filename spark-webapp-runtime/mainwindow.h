@@ -30,7 +30,7 @@ public:
                bool nFullScreen = false,
                bool nFixSize = false,
                bool nHideButtons = false,
-               DAboutDialog *dialog = nullptr,
+              QDialog *dialog = nullptr,
                QWidget *parent = nullptr);
     ~MainWindow();
 
