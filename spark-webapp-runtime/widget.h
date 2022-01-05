@@ -5,6 +5,7 @@
 #include <QWebEngineProfile>
 #include <QWebEngineView>
 #include <QLayout>
+#include <QStackedLayout>
 
 #include <DSpinner>
 
@@ -27,12 +28,10 @@ public:
 
 private:
     WebEngineView *m_webEngineView;
-    QString m_szUrl;
     DSpinner *m_spinner;
+    QStackedLayout *mainLayout;
 
-    QHBoxLayout *main;
-
-    void clearLayout(QLayout *layout);
+    QString m_szUrl;
 
 private slots:
     void on_loadStarted();

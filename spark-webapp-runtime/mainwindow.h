@@ -26,11 +26,11 @@ public:
                QString szUrl = DEFAULT_URL,
                int nWidth = DEFAULT_WIDTH,
                int nHeight = DEFAULT_HEIGHT,
-               bool tray = false,
+               bool nTray = false,
                bool nFullScreen = false,
                bool nFixSize = false,
                bool nHideButtons = false,
-              QDialog *dialog = nullptr,
+               QDialog *dialog = nullptr,
                QWidget *parent = nullptr);
     ~MainWindow();
 
@@ -42,6 +42,37 @@ protected:
     void closeEvent(QCloseEvent *event);
 
 private:
+    void initUI();
+    void initTitleBar();
+    void initDownloadProgressBar();
+    void initTrayIcon();
+    void initConnections();
+
+    void fullScreen();
+    void fixSize();
+    void hideButtons();
+    void clearCache();
+
+    QString saveAs(QString fileName);
+
+signals:
+    void sigQuit();
+
+private slots:
+    void on_trayIconActivated(QSystemTrayIcon::ActivationReason reason);
+
+    void on_downloadStart(QWebEngineDownloadItem *item);
+    void on_downloadProgress(qint64 bytesReceived, qint64 bytesTotal);
+    void on_downloadFinish(QString filePath);
+    void on_downloadPause(QWebEngineDownloadItem *item);
+    void on_downloadResume(QWebEngineDownloadItem *item);
+    void on_downloadCancel(QWebEngineDownloadItem *item);
+
+private:
+    QString m_title, m_url;
+    int m_width, m_height;
+    bool m_isTrayEnabled, m_isFullScreen, m_isFixedSize, m_isHideButton;
+
     Widget *m_widget;
     DAboutDialog *m_dialog;
     QSystemTrayIcon *m_tray;
@@ -54,44 +85,23 @@ private:
     QAction *m_fullScreen;
     QAction *m_fixSize;
     QAction *m_hideButtons;
+    QAction *m_clearCache;
 
     QMenu *t_menu;
     QAction *t_show;
     QAction *t_about;
     QAction *t_exit;
 
-    QWidget *downloadProgressBar;
-    DProgressBar *bar;
-    DPushButton *pause;
-    DPushButton *resume;
-    DPushButton *cancel;
-    QHBoxLayout *progress;
-    DFloatingMessage *message;
+    DFloatingMessage *downloadMessage;
+    QWidget *downloadProgressWidget;
+    QHBoxLayout *progressBarLayout;
+    DProgressBar *downloadProgressBar;
+    DPushButton *btnPause;
+    DPushButton *btnResume;
+    DPushButton *btnCancel;
 
     QMutex mutex; // 通过 Mutex 互斥量禁止同时下载多个文件（使用简单的 bool 变量应该也可以实现该功能？）
     bool isCanceled; // 判断是否为取消下载
-
-    bool mtray, mFixSize;
-    int m_width, m_height;
-
-    void fullScreen();
-    void fixSize();
-    void hideButtons();
-
-    QString saveAs(QString fileName);
-
-private slots:
-    void trayIconActivated(QSystemTrayIcon::ActivationReason reason);
-
-    void on_downloadStart(QWebEngineDownloadItem *item);
-    void on_downloadProgress(qint64 bytesReceived, qint64 bytesTotal);
-    void on_downloadFinish(QString filePath);
-    void on_downloadPause(QWebEngineDownloadItem *item);
-    void on_downloadResume(QWebEngineDownloadItem *item);
-    void on_downloadCancel(QWebEngineDownloadItem *item);
-
-signals:
-    void sigQuit();
 };
 
 #endif // MAINWINDOW_H

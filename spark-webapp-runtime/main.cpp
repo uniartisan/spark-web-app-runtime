@@ -5,6 +5,7 @@
 #include "mainwindow.h"
 
 #include <DApplication>
+#include <DPlatformWindowHandle>
 
 #include <QCommandLineParser>
 #include <QCommandLineOption>
@@ -15,18 +16,40 @@
 #include "httpd.h"
 
 DWIDGET_USE_NAMESPACE
+
 int main(int argc, char *argv[])
 {
+    if (!QString(qgetenv("XDG_CURRENT_DESKTOP")).toLower().startsWith("deepin")) {
+        setenv("XDG_CURRENT_DESKTOP", "Deepin", 1);
+    }
+
+    // 龙芯机器配置,使得DApplication能正确加载QTWEBENGINE
+    qputenv("DTK_FORCE_RASTER_WIDGETS", "FALSE");
+//    qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-features=UseModernMediaControls");
+//    qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-web-security");
+#ifdef __sw_64__
+    qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--no-sandbox");
+#endif
+
+#ifndef DSTORE_NO_DXCBs
+    Dtk::Widget::DApplication::loadDXcbPlugin();
+#endif
+
     DApplication a(argc, argv);
-	
+
     a.loadTranslator();
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
+    if (!Dtk::Widget::DPlatformWindowHandle::pluginVersion().isEmpty()) {
+        a.setAttribute(Qt::AA_DontCreateNativeWidgetSiblings, true);
+    }
 
     a.setApplicationVersion(QString::number(CURRENT_VER));
-    a.setOrganizationName("spark-union"); // 添加组织名称，和商店主体的文件夹同在 ~/.local/share/spark-union 文件夹下
-    a.setApplicationName("SparkWebAppRuntime"); // 这里不要翻译，否则 ~/.local/share 中文件夹名也会被翻译
-QDialog *dialog ;
-/* Customized DAboutDialog (Can't work on other distro like Ubuntu...)
+    a.setOrganizationName(ORGANIZATION_NAME); // 添加组织名称，和商店主体的文件夹同在 ~/.local/share/spark-union 文件夹下
+    a.setApplicationName(APPLICATION_NAME); // 这里不要翻译，否则 ~/.local/share 中文件夹名也会被翻译
+    a.setProductName(DEFAULT_TITLE);
+    a.setApplicationDisplayName(DEFAULT_TITLE);
+
+    // Customized DAboutDialog (Can't work on other distro like Ubuntu...)
     DAboutDialog *dialog = new DAboutDialog;
     a.setAboutDialog(dialog);
 
@@ -41,21 +64,19 @@ QDialog *dialog ;
     // CompanyLogo
     dialog->setCompanyLogo(QPixmap(":/images/Logo-Spark.png"));
     // Description
-*/
+
     QString szDefaultDesc = QString("<a href='https://gitee.com/deepin-community-store/spark-web-app-runtime'><span style='font-size:12pt;font-weight:500;'>%1</span></a><br/>"
                                     "<span style='font-size:12pt;'>%2</span>")
                                 .arg(DEFAULT_TITLE)
                                 .arg(QObject::tr("Presented By Spark developers # HadesStudio"));
-/*    
-dialog->setDescription(szDefaultDesc);
+
+    dialog->setDescription(szDefaultDesc);
     // WebsiteName
     dialog->setWebsiteName("Spark Project");
     // WebsiteLink
-    dialog->setWebsiteLink("https://git
-ee.com/deepin-community-store/");
+    dialog->setWebsiteLink("https://gitee.com/deepin-community-store/");
     // License
-    dialog->setLicense(QObject::tr("This program is open source under GPLv3")); // 本程序按GPL第三版开源
-*/
+    dialog->setLicense(QObject::tr("Published under GPLv3"));
 
     QCommandLineParser parser;
 
@@ -183,8 +204,8 @@ ee.com/deepin-community-store/");
                 QSettings settings(szCfgFile, QSettings::IniFormat);
                 szTitle = settings.value("SparkWebAppRuntime/Title", DEFAULT_TITLE).toString();
                 szUrl = settings.value("SparkWebAppRuntime/URL", DEFAULT_TITLE).toString();
-                width = settings.value("SparkWebAppRuntime/Width", DEFAULT_WIDTH).toUInt();
-                height = settings.value("SparkWebAppRuntime/Height", DEFAULT_HEIGHT).toUInt();
+                width = settings.value("SparkWebAppRuntime/Width", DEFAULT_WIDTH).toInt();
+                height = settings.value("SparkWebAppRuntime/Height", DEFAULT_HEIGHT).toInt();
                 tray = settings.value("SparkWebAppRunTime/Tray", false).toBool();
                 fullScreen = settings.value("SparkWebAppRunTime/FullScreen", false).toBool();
                 fixSize = settings.value("SparkWebAppRunTime/FixSize", false).toBool();
@@ -301,8 +322,7 @@ ee.com/deepin-community-store/");
 
     a.setQuitOnLastWindowClosed(!tray); // 启用托盘时，退出程序后服务不终止
 
-    MainWindow w(szTitle, szUrl, width, height, tray, fullScreen, fixSize, hideButtons,dialog);
-    // qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-features=UseModernMediaControls");
+    MainWindow w(szTitle, szUrl, width, height, tray, fullScreen, fixSize, hideButtons, dialog);
 
 #if SSL_SERVER
     if (!szRootPath.isEmpty() && u16Port > 0 && u16sslPort > 0) {
@@ -321,7 +341,7 @@ ee.com/deepin-community-store/");
         szIcon = parser.value(optIcon);
     }
 
-/*    if (!szIcon.isEmpty()) {
+    if (!szIcon.isEmpty()) {
         dialog->setWindowIcon(QIcon(szIcon));
         dialog->setProductIcon(QIcon(szIcon));
         w.setIcon(szIcon);
@@ -329,7 +349,7 @@ ee.com/deepin-community-store/");
     if (!szDesc.isEmpty()) {
         dialog->setDescription(szDesc);
     }
-*/
+
     w.show();
     return a.exec();
 }

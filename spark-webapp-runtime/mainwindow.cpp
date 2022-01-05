@@ -16,157 +16,54 @@ MainWindow::MainWindow(QString szTitle,
                        QString szUrl,
                        int nWidth,
                        int nHeight,
-                       bool tray,
+                       bool nTray,
                        bool nFullScreen,
                        bool nFixSize,
                        bool nHideButtons,
                        QDialog *dialog,
                        QWidget *parent)
     : DMainWindow(parent)
-    , m_widget(new Widget(szUrl))
-//    , m_dialog(dialog)
-    , m_tray(new QSystemTrayIcon)
+    , m_title(szTitle)
+    , m_url(szUrl)
+    , m_width(nWidth)
+    , m_height(nHeight)
+    , m_isTrayEnabled(nTray)
+    , m_isFullScreen(nFullScreen)
+    , m_isFixedSize(nFixSize)
+    , m_isHideButton(nHideButtons)
+    , m_widget(new Widget(m_url, this))
+    , m_dialog(dynamic_cast<DAboutDialog *>(dialog))
+    , m_tray(new QSystemTrayIcon(this))
     , btnBack(new DToolButton(titlebar()))
     , btnForward(new DToolButton(titlebar()))
     , btnRefresh(new DToolButton(titlebar()))
-    , m_menu(new QMenu)
-    , m_fullScreen(new QAction(tr("Full Screen")))
-    , m_fixSize(new QAction(tr("Fix Size")))
-    , m_hideButtons(new QAction(tr("Hide Buttons")))
-    , t_menu(new QMenu)
-    , t_show(new QAction(tr("Show MainWindow")))
-    , t_about(new QAction(tr("About")))
-    , t_exit(new QAction(tr("Exit")))
-    , downloadProgressBar(new QWidget)
-    , bar(new DProgressBar)
-    , pause(new DPushButton(tr("Pause")))
-    , resume(new DPushButton(tr("Resume")))
-    , cancel(new DPushButton(tr("Cancel")))
-    , progress(new QHBoxLayout)
-    , message(new DFloatingMessage(DFloatingMessage::ResidentType))
+    , m_menu(new QMenu(titlebar()))
+    , m_fullScreen(new QAction(tr("Full Screen"), this))
+    , m_fixSize(new QAction(tr("Fix Size"), this))
+    , m_hideButtons(new QAction(tr("Hide Buttons"), this))
+    , m_clearCache(new QAction(tr("Clear Cache"), this))
+    , t_menu(new QMenu(this))
+    , t_show(new QAction(tr("Show MainWindow"), this))
+    , t_about(new QAction(tr("About"), this))
+    , t_exit(new QAction(tr("Exit"), this))
+    , downloadMessage(new DFloatingMessage(DFloatingMessage::ResidentType, this))
+    , downloadProgressWidget(new QWidget(downloadMessage))
+    , progressBarLayout(new QHBoxLayout(downloadProgressWidget))
+    , downloadProgressBar(new DProgressBar(downloadProgressWidget))
+    , btnPause(new DPushButton(tr("Pause"), downloadProgressWidget))
+    , btnResume(new DPushButton(tr("Resume"), downloadProgressWidget))
+    , btnCancel(new DPushButton(tr("Cancel"), downloadProgressWidget))
     , isCanceled(false)
-    , mtray(tray)
-    , mFixSize(nFixSize)
-   , m_width(nWidth)
-   , m_height(nHeight)
 {
-    /* 初始化 MainWindow */
-    setCentralWidget(m_widget);
-    centralWidget()->layout()->setContentsMargins(0, 0, 0, 0);
-
-    resize(m_width, m_height);
-
-    moveToCenter(this);
-
-    setWindowIcon(QIcon(":/images/spark-webapp-runtime.svg"));
-
-    titlebar()->setTitle(szTitle);
-    titlebar()->setIcon(QIcon(":/images/spark-webapp-runtime.svg"));
-
-    btnBack->setIcon(QIcon(":/images/go-previous-24.svg"));
-    btnBack->setIconSize(QSize(36, 36));
-    btnForward->setIcon(QIcon(":/images/go-next-24.svg"));
-    btnForward->setIconSize(QSize(36, 36));
-    btnRefresh->setIcon(QIcon(":/images/view-refresh.svg"));
-    btnRefresh->setIconSize(QSize(36, 36));
-
-    titlebar()->addWidget(btnBack, Qt::AlignLeft);
-    titlebar()->addWidget(btnForward, Qt::AlignLeft);
-    titlebar()->addWidget(btnRefresh, Qt::AlignLeft);
-
-    m_fullScreen->setCheckable(true);
-    m_fullScreen->setChecked(nFullScreen);
-    m_fullScreen->setDisabled(nFixSize); //  固定窗口大小时禁用全屏模式，避免标题栏按钮 BUG
-    m_fixSize->setCheckable(true);
-    m_fixSize->setChecked(nFixSize);
-    m_fixSize->setDisabled(nFixSize);
-    m_hideButtons->setCheckable(true);
-    m_hideButtons->setChecked(nHideButtons);
-    m_hideButtons->setDisabled(nHideButtons);
-    /* 命令行设置参数后 GUI 中隐藏对应选项 */
-    if (!nFixSize) {
-        m_menu->addAction(m_fullScreen);
-        m_menu->addAction(m_fixSize);
-    }
-    if (!nHideButtons) {
-        m_menu->addAction(m_hideButtons);
-    }
-    titlebar()->setMenu(m_menu);
-
-    titlebar()->setAutoHideOnFullscreen(true);
-
-    fixSize();
-    hideButtons();
-
-    /* 初始化 TrayIcon */
-    t_menu->addAction(t_show);
-    t_menu->addAction(t_about);
-    t_menu->addAction(t_exit);
-    m_tray->setContextMenu(t_menu);
-    m_tray->setToolTip(szTitle);
-    m_tray->setIcon(QIcon(":/images/spark-webapp-runtime.svg"));
-
-    if (tray) {
-        m_tray->show(); // 启用托盘时显示
-    }
-
-    /* 初始化 DownloadProgressBar */
-    bar->setFixedSize(250, 8);
-    progress->addWidget(bar);
-    progress->addSpacing(5);
-    progress->addWidget(pause);
-    progress->addWidget(resume);
-    progress->addWidget(cancel);
-    downloadProgressBar->setLayout(progress);
-    message->setIcon(QIcon::fromTheme("deepin-download").pixmap(64, 64));
-    message->setWidget(downloadProgressBar);
-
-    connect(btnBack, &DToolButton::clicked, this, [&]() {
-        m_widget->goBack();
-    });
-    connect(btnForward, &DToolButton::clicked, this, [&]() {
-        m_widget->goForward();
-    });
-    connect(btnRefresh, &DToolButton::clicked, this, [&]() {
-        m_widget->refresh();
-    });
-
-    connect(m_fullScreen, &QAction::triggered, this, [=]() {
-        fullScreen();
-    });
-    connect(m_fixSize, &QAction::triggered, this, [=]() {
-        fixSize();
-    });
-    connect(m_hideButtons, &QAction::triggered, this, [=]() {
-        hideButtons();
-    });
-
-    connect(t_show, &QAction::triggered, this, [=]() {
-        this->activateWindow();
-        fixSize();
-    });
-    connect(t_about, &QAction::triggered, this, [=]() {
-        m_dialog->activateWindow();
-        m_dialog->show();
-    });
-    connect(t_exit, &QAction::triggered, this, [=]() {
-        exit(0);
-    });
-    connect(m_tray, &QSystemTrayIcon::activated, this, &MainWindow::trayIconActivated);
-
-    connect(m_widget->getPage()->profile(), &QWebEngineProfile::downloadRequested, this, &MainWindow::on_downloadStart);
-
-    connect(m_widget->getPage(), &QWebEnginePage::windowCloseRequested, this, [=]() {
-        this->close();
-    });
+    initUI();
+    initTrayIcon();
+    initConnections();
 }
 
 MainWindow::~MainWindow()
 {
     emit sigQuit();
-    delete m_widget;
     delete m_dialog;
-    delete m_tray;
 }
 
 void MainWindow::setIcon(QString szIconPath)
@@ -197,7 +94,7 @@ void MainWindow::resizeEvent(QResizeEvent *event)
         m_fullScreen->setChecked(true);
     } else {
         m_fullScreen->setChecked(false);
-        if (!mFixSize) {
+        if (!m_isFixedSize) {
             m_fixSize->setEnabled(true); // 命令行参数没有固定窗口大小时，窗口模式下允许手动选择固定窗口大小
         }
     }
@@ -205,15 +102,159 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
-{}
-/*
 {
-    if (!mtray) {
+    if (!m_isTrayEnabled) {
         m_dialog->close(); // 不启用托盘时，关闭主窗口则关闭关于窗口
     }
     event->accept();
 }
-*/
+
+void MainWindow::initUI()
+{
+    // 初始化 MainWindow
+    setCentralWidget(m_widget);
+    centralWidget()->layout()->setContentsMargins(0, 0, 0, 0);
+
+    resize(m_width, m_height);
+
+    moveToCenter(this);
+
+    setWindowIcon(QIcon(":/images/spark-webapp-runtime.svg"));
+
+    initTitleBar();
+    initDownloadProgressBar();
+
+    fixSize();
+    fullScreen();
+}
+
+void MainWindow::initTitleBar()
+{
+    titlebar()->setTitle(m_title);
+    titlebar()->setIcon(QIcon(":/images/spark-webapp-runtime.svg"));
+
+    btnBack->setIcon(QIcon(":/images/go-previous-24.svg"));
+    btnBack->setIconSize(QSize(36, 36));
+    btnForward->setIcon(QIcon(":/images/go-next-24.svg"));
+    btnForward->setIconSize(QSize(36, 36));
+    btnRefresh->setIcon(QIcon(":/images/view-refresh.svg"));
+    btnRefresh->setIconSize(QSize(36, 36));
+
+    titlebar()->addWidget(btnBack, Qt::AlignLeft);
+    titlebar()->addWidget(btnForward, Qt::AlignLeft);
+    titlebar()->addWidget(btnRefresh, Qt::AlignLeft);
+
+    m_fullScreen->setCheckable(true);
+    m_fullScreen->setChecked(m_isFullScreen);
+    m_fullScreen->setDisabled(m_isFixedSize); // NOTE: 固定窗口大小时禁用全屏模式，避免标题栏按钮显示问题
+    m_fixSize->setCheckable(true);
+    m_fixSize->setChecked(m_isFixedSize);
+    m_fixSize->setDisabled(m_isFixedSize);
+    m_hideButtons->setCheckable(true);
+    m_hideButtons->setChecked(m_isHideButton);
+    m_hideButtons->setDisabled(m_isHideButton);
+
+    // 命令行设置参数后 GUI 中隐藏对应选项
+    if (!m_isFixedSize) {
+        m_menu->addAction(m_fullScreen);
+        m_menu->addAction(m_fixSize);
+    }
+
+    if (!m_isHideButton) {
+        m_menu->addAction(m_hideButtons);
+    }
+
+    if (m_menu->actions().size() > 0) {
+        m_menu->addSeparator();
+        m_menu->addAction(m_clearCache);
+    }
+
+    titlebar()->setMenu(m_menu);
+    titlebar()->setAutoHideOnFullscreen(true);
+}
+
+void MainWindow::initDownloadProgressBar()
+{
+    // 初始化 DownloadProgressBar
+    downloadProgressBar->setFixedSize(250, 8);
+    btnPause->setFixedSize(80, 32);
+    btnResume->setFixedSize(80, 32);
+    btnCancel->setFixedSize(80, 32);
+
+    progressBarLayout->setMargin(0);
+    progressBarLayout->setSpacing(0);
+    progressBarLayout->setAlignment(Qt::AlignCenter);
+    progressBarLayout->addWidget(downloadProgressBar);
+    progressBarLayout->addSpacing(10);
+    progressBarLayout->addWidget(btnPause);
+    progressBarLayout->addWidget(btnResume);
+    progressBarLayout->addWidget(btnCancel);
+
+    downloadMessage->setIcon(QIcon::fromTheme("deepin-download").pixmap(64, 64));
+    downloadMessage->setWidget(downloadProgressWidget);
+    downloadMessage->hide();
+}
+
+void MainWindow::initTrayIcon()
+{
+    // 初始化 TrayIcon
+    t_menu->addAction(t_show);
+    t_menu->addAction(t_about);
+    t_menu->addAction(t_exit);
+    m_tray->setContextMenu(t_menu);
+    m_tray->setToolTip(m_title);
+    m_tray->setIcon(QIcon(":/images/spark-webapp-runtime.svg"));
+
+    if (m_isTrayEnabled) {
+        m_tray->show(); // 启用托盘时显示
+    }
+}
+
+void MainWindow::initConnections()
+{
+    connect(btnBack, &DToolButton::clicked, this, [&]() {
+        m_widget->goBack();
+    });
+    connect(btnForward, &DToolButton::clicked, this, [&]() {
+        m_widget->goForward();
+    });
+    connect(btnRefresh, &DToolButton::clicked, this, [&]() {
+        m_widget->refresh();
+    });
+
+    connect(m_fullScreen, &QAction::triggered, this, [=]() {
+        fullScreen();
+    });
+    connect(m_fixSize, &QAction::triggered, this, [=]() {
+        fixSize();
+    });
+    connect(m_hideButtons, &QAction::triggered, this, [=]() {
+        hideButtons();
+    });
+    connect(m_clearCache, &QAction::triggered, this, [=]() {
+        clearCache();
+    });
+
+    connect(t_show, &QAction::triggered, this, [=]() {
+        this->activateWindow();
+        fixSize();
+    });
+    connect(t_about, &QAction::triggered, this, [=]() {
+        m_dialog->activateWindow();
+        m_dialog->show();
+    });
+    connect(t_exit, &QAction::triggered, this, [=]() {
+        exit(0);
+    });
+    connect(m_tray, &QSystemTrayIcon::activated, this, &MainWindow::on_trayIconActivated);
+
+    connect(m_widget->getPage()->profile(), &QWebEngineProfile::downloadRequested, this, &MainWindow::on_downloadStart);
+
+    connect(m_widget->getPage(), &QWebEnginePage::windowCloseRequested, this, [=]() {
+        this->close();
+    });
+}
+
 void MainWindow::fullScreen()
 {
     if (m_fullScreen->isChecked()) {
@@ -223,7 +264,7 @@ void MainWindow::fullScreen()
         showFullScreen();
         // DMessageManager::instance()->sendMessage(this, QIcon::fromTheme("dialog-information").pixmap(64, 64), QString(tr("%1Fullscreen Mode")).arg("    "));
     } else {
-        if (!mFixSize) {
+        if (!m_isFixedSize) {
             m_fixSize->setDisabled(false); // 命令行参数没有固定窗口大小时，窗口模式下允许手动选择固定窗口大小
         }
         m_menu->update();
@@ -239,13 +280,14 @@ void MainWindow::fixSize()
         m_fullScreen->setDisabled(true);
         m_menu->update();
         setFixedSize(this->size());
-        /* 存在 BUG: 启用托盘图标后，若手动选择固定窗口大小，并且关闭窗口，再次打开时会丢失最大化按钮，且无法恢复。 */
+        // BUG: 启用托盘图标后，若手动选择固定窗口大小，并且关闭窗口，再次打开时会丢失最大化按钮，且无法恢复。
     } else {
         m_fullScreen->setDisabled(false);
         m_menu->update();
         setMinimumSize(m_width, m_height);
         setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
     }
+
     fullScreen();
 }
 
@@ -262,12 +304,23 @@ void MainWindow::hideButtons()
     }
 }
 
+void MainWindow::clearCache()
+{
+    // 清除缓存文件夹并刷新页面
+    QDir dir(QDir::homePath() + "/.local/share/" + ORGANIZATION_NAME + "/" + APPLICATION_NAME);
+    if (dir.exists()) {
+        dir.removeRecursively();
+    }
+
+    emit btnRefresh->clicked();
+}
+
 QString MainWindow::saveAs(QString fileName)
 {
     QString saveFile = QFileDialog::getSaveFileName(this, tr("Save As"), QDir::homePath() + "/Downloads/" + fileName);
     if (!saveFile.isEmpty()) {
-        if (QFileInfo(QFileInfo(saveFile).absolutePath()).permissions().testFlag(QFile::WriteUser)) // 判断上层目录是否可写入
-        {
+        // 判断上层目录是否可写入
+        if (QFileInfo(QFileInfo(saveFile).absolutePath()).isWritable()) {
             return saveFile;
         } else {
             return saveAs(fileName);
@@ -276,7 +329,7 @@ QString MainWindow::saveAs(QString fileName)
     return nullptr;
 }
 
-void MainWindow::trayIconActivated(QSystemTrayIcon::ActivationReason reason)
+void MainWindow::on_trayIconActivated(QSystemTrayIcon::ActivationReason reason)
 {
     switch (reason) {
     /* 响应托盘点击事件 */
@@ -291,7 +344,7 @@ void MainWindow::trayIconActivated(QSystemTrayIcon::ActivationReason reason)
 
 void MainWindow::on_downloadStart(QWebEngineDownloadItem *item)
 {
-    /* 尝试加锁互斥量，禁止同时下载多个文件 */
+    // 尝试加锁互斥量，禁止同时下载多个文件
     if (mutex.tryLock()) {
         QString fileName = QFileInfo(item->path()).fileName();
         QString filePath = saveAs(fileName);
@@ -307,13 +360,13 @@ void MainWindow::on_downloadStart(QWebEngineDownloadItem *item)
             on_downloadFinish(filePath);
         });
 
-        connect(pause, &DPushButton::clicked, this, [=]() {
+        connect(btnPause, &DPushButton::clicked, this, [=]() {
             on_downloadPause(item);
         });
-        connect(resume, &DPushButton::clicked, this, [=]() {
+        connect(btnResume, &DPushButton::clicked, this, [=]() {
             on_downloadResume(item);
         });
-        connect(cancel, &DPushButton::clicked, this, [=]() {
+        connect(btnCancel, &DPushButton::clicked, this, [=]() {
             on_downloadCancel(item);
         });
 
@@ -324,11 +377,11 @@ void MainWindow::on_downloadStart(QWebEngineDownloadItem *item)
 
         item->accept();
 
-        /* 重置 DownloadProgressBar 状态 */
+        // 重置 DownloadProgressBar 状态
         isCanceled = false;
-        resume->hide();
-        pause->show();
-        this->message->show(); // 上一次下载完成后隐藏了进度条，这里要重新显示
+        btnResume->hide();
+        btnPause->show();
+        this->downloadMessage->show(); // 上一次下载完成后隐藏了进度条，这里要重新显示
     } else {
         DMessageManager::instance()->sendMessage(this, QIcon::fromTheme("dialog-cancel").pixmap(64, 64), QString(tr("%1Wait for previous download to complete!")).arg("    "));
     }
@@ -337,21 +390,21 @@ void MainWindow::on_downloadStart(QWebEngineDownloadItem *item)
 void MainWindow::on_downloadProgress(qint64 bytesReceived, qint64 bytesTotal)
 {
     int value = int(double(bytesReceived) / double(bytesTotal) * 100.0);
-    bar->setValue(value);
+    downloadProgressBar->setValue(value);
 
-    message->setMessage("    " + QString::number(value) + "%");
+    downloadMessage->setMessage("    " + QString::number(value) + "%");
 
-    DMessageManager::instance()->sendMessage(this, message);
+    DMessageManager::instance()->sendMessage(this, downloadMessage);
 }
 
 void MainWindow::on_downloadFinish(QString filePath)
 {
     mutex.unlock(); // 解锁互斥量，允许下载新文件
 
-    message->hide();
+    downloadMessage->hide();
 
-    if (!isCanceled) // 下载完成显示提示信息
-    {
+    // 下载完成显示提示信息
+    if (!isCanceled) {
         DPushButton *button = new DPushButton(tr("Open"));
 
         DFloatingMessage *message = new DFloatingMessage(DFloatingMessage::ResidentType);
@@ -371,18 +424,18 @@ void MainWindow::on_downloadPause(QWebEngineDownloadItem *item)
 {
     item->pause();
 
-    message->setIcon(QIcon::fromTheme("package-download-failed").pixmap(64, 64));
-    resume->show();
-    pause->hide();
+    downloadMessage->setIcon(QIcon::fromTheme("package-download-failed").pixmap(64, 64));
+    btnResume->show();
+    btnPause->hide();
 }
 
 void MainWindow::on_downloadResume(QWebEngineDownloadItem *item)
 {
     item->resume();
 
-    message->setIcon(QIcon::fromTheme("deepin-download").pixmap(64, 64));
-    resume->hide();
-    pause->show();
+    downloadMessage->setIcon(QIcon::fromTheme("deepin-download").pixmap(64, 64));
+    btnResume->hide();
+    btnPause->show();
 }
 
 void MainWindow::on_downloadCancel(QWebEngineDownloadItem *item)
@@ -392,6 +445,6 @@ void MainWindow::on_downloadCancel(QWebEngineDownloadItem *item)
 
     mutex.unlock();
 
-    message->hide();
+    downloadMessage->hide();
     DMessageManager::instance()->sendMessage(this, QIcon::fromTheme("dialog-error").pixmap(64, 64), QString(tr("%1Download canceled!")).arg("    "));
 }

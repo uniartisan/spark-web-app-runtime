@@ -4,8 +4,9 @@
 #include <QObject>
 
 #define DEFAULT_TITLE QObject::tr("SparkWebAppRuntime")
-//#define DEFAULT_URL     QString("qrc:/help/help.html")
-#define DEFAULT_URL QString("https://www.baidu.com")
+#define APPLICATION_NAME QString("SparkWebAppRuntime")
+#define ORGANIZATION_NAME QString("spark-union")
+#define DEFAULT_URL QString("qrc:/help/help.html")
 #define DEFAULT_WIDTH (1024)
 #define DEFAULT_HEIGHT (768)
 

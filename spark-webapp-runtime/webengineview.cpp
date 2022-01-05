@@ -3,7 +3,6 @@
 WebEngineView::WebEngineView(QWidget *parent)
     : QWebEngineView(parent)
 {
-
 }
 
 QWebEngineView *WebEngineView::createWindow(QWebEnginePage::WebWindowType type)
