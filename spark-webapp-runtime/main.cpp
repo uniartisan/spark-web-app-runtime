@@ -11,6 +11,7 @@
 #include <QCommandLineOption>
 #include <QFileInfo>
 #include <QSettings>
+#include <QVector>
 
 #include "globaldefine.h"
 #include "httpd.h"
@@ -35,7 +36,14 @@ int main(int argc, char *argv[])
     Dtk::Widget::DApplication::loadDXcbPlugin();
 #endif
 
-    DApplication a(argc, argv);
+    // 强制使用DTK平台插件
+    QVector<char *> fakeArgv(argc + 2);
+    fakeArgv[0] = argv[0];
+    fakeArgv[1] = "-platformtheme";
+    fakeArgv[2] = "deepin";
+    for(int i = 1; i < argc; i++) fakeArgv[i + 2] = argv[i];
+    int fakeArgc = argc + 2;
+    DApplication a(fakeArgc, fakeArgv.data());
 
     a.loadTranslator();
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
