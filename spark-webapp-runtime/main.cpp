@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
         a.setAttribute(Qt::AA_DontCreateNativeWidgetSiblings, true);
     }
 
-    a.setApplicationVersion(QString::number(CURRENT_VER));
+    a.setApplicationVersion(QString(CURRENT_VER));
     a.setOrganizationName(ORGANIZATION_NAME); // 添加组织名称，和商店主体的文件夹同在 ~/.local/share/spark-union 文件夹下
     a.setApplicationName(APPLICATION_NAME); // 这里不要翻译，否则 ~/.local/share 中文件夹名也会被翻译
     a.setProductName(DEFAULT_TITLE);
