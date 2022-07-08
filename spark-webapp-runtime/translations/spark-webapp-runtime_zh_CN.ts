@@ -165,32 +165,37 @@
         <translation>隐藏控制按钮。默认关闭该此功能。</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="139"/>
+        <location filename="../main.cpp" line="147"/>
         <source>The ICON of Application.</source>
         <translation>设置应用的图标。</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="146"/>
+        <location filename="../main.cpp" line="154"/>
         <source>The Description of Application.</source>
         <translation>设置应用的描述信息。</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="153"/>
+        <location filename="../main.cpp" line="161"/>
         <source>The Configuration file of Application.</source>
         <translation>设置应用的配置文件。</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="160"/>
+        <location filename="../main.cpp" line="168"/>
         <source>The root path of the program web service.</source>
         <translation>设置内置 WebServer 的根路径。</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="167"/>
+        <location filename="../main.cpp" line="175"/>
         <source>The port number of the program web service.</source>
         <translation>设置内置 WebServer 的监听端口号。</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="175"/>
+        <location filename="../main.cpp" line="183"/>
+        <source>To use GPU instead of CPU to decoding. Default True.</source>
+        <translation>启用GPU渲染，默认开启。</translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="191"/>
         <source>The ssl port number of the program web service.</source>
         <translation>设置内置 WebServer 的 SSL 协议的监听端口号。</translation>
     </message>

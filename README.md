@@ -35,6 +35,7 @@ spark-webapp-runtime 应用标题 目标网址 应用窗口宽度 应用窗口�
                   -c, --cfg <cfg>        设置应用的配置文件。
                   -r, --root <root>      设置内置 WebServer 的根路径。
                   -P, --port <port>      设置内置 WebServer 的监听端口号。
+                  -G, --GPU <0/1>        设置启用 GPU 渲染加速，默认开启。
             
 
 需要注意的是, 命令行会覆盖配置文件信息。

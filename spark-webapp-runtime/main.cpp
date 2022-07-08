@@ -177,6 +177,14 @@ int main(int argc, char *argv[])
                                DEFAULT_PORT);
     parser.addOption(optPort);
 
+
+    QCommandLineOption useGPU(QStringList() << "G"
+                                            << "GPU",
+                               QObject::tr("To use GPU instead of CPU to decoding. Default True."),
+                               "GPU",
+                               QString::number(DEFAULT_GPU));
+    parser.addOption(useGPU);
+
 #if SSL_SERVER
     QCommandLineOption optSSLPort(QStringList() << "s"
                                                 << "sslport",
@@ -200,6 +208,7 @@ int main(int argc, char *argv[])
     QString szDesc = DEFAULT_DESC;
     QString szRootPath = DEFAULT_ROOT;
     quint16 u16Port = DEFAULT_PORT;
+    bool toUseGPU = DEFAULT_GPU;
 #if SSL_SERVER
     quint16 u16sslPort = 0;
 #endif
@@ -268,6 +277,17 @@ int main(int argc, char *argv[])
 
     if (parser.isSet(optPort)) {
         u16Port = parser.value(optPort).toUInt();
+    }
+
+    if (parser.isSet(useGPU)) {
+        toUseGPU = parser.value(useGPU).toUInt();
+    }
+    if (toUseGPU == true){
+        qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--ignore-gpu-blacklist --enable-gpu-rasterization --enable-native-gpu-memory-buffers --enable-accelerated-video-decode");
+        #ifdef __sw_64__
+            qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--ignore-gpu-blacklist --enable-gpu-rasterization --enable-native-gpu-memory-buffers --enable-accelerated-video-decode --no-sandbox");
+        #endif
+        qDebug() << "Setting GPU to True.";
     }
 
 #if SSL_SERVER
